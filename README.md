@@ -55,4 +55,4 @@ We love the feedbacks. It's help us to continue grow and improve. Give your feed
 
 ## License
 
-MIT © [Lucas Bento](http://github.com/lucasbento)
+MIT © [Entria](http://github.com/entria)
