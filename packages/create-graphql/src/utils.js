@@ -1,3 +1,4 @@
+// @flow
 import shell from 'shelljs';
 import chalk from 'chalk';
 import ora from 'ora';

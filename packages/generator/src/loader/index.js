@@ -1,3 +1,4 @@
+// @flow
 import Generator from 'yeoman-generator';
 import pluralize from 'pluralize';
 import {

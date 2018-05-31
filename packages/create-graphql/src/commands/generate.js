@@ -1,3 +1,4 @@
+// @flow
 import spawn from 'cross-spawn-promise';
 
 function parseOptions(opts) {

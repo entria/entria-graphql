@@ -1,3 +1,4 @@
+// @flow
 import 'babel-polyfill';
 
 import program from 'commander';

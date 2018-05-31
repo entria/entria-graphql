@@ -17,8 +17,12 @@ it('generate a type', async () => {
     .withArguments('Example')
     .toPromise();
 
+  console.log('folder: ', folder);
+
   const destinationDir = getConfigDir('type');
   const destinationTestDir = getConfigDir('type_test');
+
+  console.log('generate: ', destinationDir, destinationTestDir);
 
   assert.file([
     `${destinationDir}/ExampleType.js`, `${destinationTestDir}/ExampleType.spec.js`,
