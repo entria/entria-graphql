@@ -8,7 +8,7 @@ import {
   getFixturePath,
 } from '../../../test/helpers';
 
-import { getConfigDir } from '../../utils';
+import { getConfigDir } from '../../config';
 
 const typeGenerator = path.join(__dirname, '..');
 
@@ -17,20 +17,17 @@ it('generate a type', async () => {
     .withArguments('Example')
     .toPromise();
 
-  console.log('folder: ', folder);
-
   const destinationDir = getConfigDir('type');
   const destinationTestDir = getConfigDir('type_test');
 
-  console.log('generate: ', destinationDir, destinationTestDir);
-
   assert.file([
-    `${destinationDir}/ExampleType.js`, `${destinationTestDir}/ExampleType.spec.js`,
+    `${destinationDir}/example/ExampleType.js`,
+    `${destinationTestDir}/example/__tests__/ExampleType.spec.js`,
   ]);
 
   const files = {
-    type: getFileContent(`${folder}/${destinationDir}/ExampleType.js`),
-    typeTest: getFileContent(`${folder}/${destinationTestDir}/ExampleType.spec.js`),
+    type: getFileContent(`${folder}/${destinationDir}/example/ExampleType.js`),
+    typeTest: getFileContent(`${folder}/${destinationTestDir}/example/__tests__/ExampleType.spec.js`),
   };
 
   expect(files).toMatchSnapshot();
@@ -41,7 +38,7 @@ it('generate a type with schema', async () => {
     .inTmpDir(dir =>
       fs.copySync(
         getFixturePath('Post'),
-        path.join(dir, 'src/model/Post.js'),
+        path.join(dir, 'src/modules/post/PostModel.js'),
       ),
     )
     .withArguments('Post Post')
@@ -51,12 +48,13 @@ it('generate a type with schema', async () => {
   const destinationTestDir = getConfigDir('type_test');
 
   assert.file([
-    `${destinationDir}/PostType.js`, `${destinationTestDir}/PostType.spec.js`,
+    `${destinationDir}/post/PostType.js`,
+    `${destinationTestDir}/post/__tests__/PostType.spec.js`,
   ]);
 
   const files = {
-    type: getFileContent(`${folder}/${destinationDir}/PostType.js`),
-    typeTest: getFileContent(`${folder}/${destinationTestDir}/PostType.spec.js`),
+    type: getFileContent(`${folder}/${destinationDir}/post/PostType.js`),
+    typeTest: getFileContent(`${folder}/${destinationTestDir}/post/__tests__/PostType.spec.js`),
   };
 
   expect(files).toMatchSnapshot();
@@ -67,7 +65,7 @@ it('generate a type with schema and without timestamps', async () => {
     .inTmpDir(dir =>
       fs.copySync(
         getFixturePath('User'),
-        path.join(dir, 'src/model/User.js'),
+        path.join(dir, 'src/modules/user/UserModel.js'),
       ),
     )
     .withArguments('User User')
@@ -77,12 +75,13 @@ it('generate a type with schema and without timestamps', async () => {
   const destinationTestDir = getConfigDir('type_test');
 
   assert.file([
-    `${destinationDir}/UserType.js`, `${destinationTestDir}/UserType.spec.js`,
+    `${destinationDir}/user/UserType.js`,
+    `${destinationTestDir}/user/__tests__/UserType.spec.js`,
   ]);
 
   const files = {
-    type: getFileContent(`${folder}/${destinationDir}/UserType.js`),
-    typeTest: getFileContent(`${folder}/${destinationTestDir}/UserType.spec.js`),
+    type: getFileContent(`${folder}/${destinationDir}/user/UserType.js`),
+    typeTest: getFileContent(`${folder}/${destinationTestDir}/user/__tests__/UserType.spec.js`),
   };
 
   expect(files).toMatchSnapshot();

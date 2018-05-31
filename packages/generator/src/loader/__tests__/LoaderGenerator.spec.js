@@ -7,7 +7,7 @@ import {
   getFileContent,
   getFixturePath,
 } from '../../../test/helpers';
-import { getConfigDir } from '../../utils';
+import { getConfigDir } from '../../config';
 
 const loaderGenerator = path.join(__dirname, '..');
 

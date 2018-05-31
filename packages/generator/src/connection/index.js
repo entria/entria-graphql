@@ -1,10 +1,10 @@
 // @flow
 import Generator from 'yeoman-generator';
 import {
-  getConfigDir,
   getRelativeConfigDir,
-  uppercaseFirstLetter,
-} from '../utils';
+  } from '../utils';
+import { getConfigDir } from '../config';
+import { uppercaseFirstLetter } from '../ejsHelpers';
 
 class ConnectionGenerator extends Generator {
   constructor(args, options) {

@@ -2,11 +2,10 @@
 import Generator from 'yeoman-generator';
 import {
   getMongooseModelSchema,
-  getConfigDir,
   getRelativeConfigDir,
-  camelCaseText,
-  uppercaseFirstLetter,
-} from '../utils';
+  } from '../utils';
+import { getConfigDir } from '../config';
+import { camelCaseText, uppercaseFirstLetter } from '../ejsHelpers';
 
 class MutationGenerator extends Generator {
   constructor(args, options) {

@@ -8,7 +8,7 @@ import {
   getFixturePath,
 } from '../../../test/helpers';
 
-import { getConfigDir } from '../../utils';
+import { getConfigDir } from '../../config';
 
 const mutationGenerator = path.join(__dirname, '..');
 
