@@ -23,7 +23,6 @@ it('generate a type', async () => {
     .toPromise();
 
   const destinationDir = getConfigDir('type');
-  const destinationTestDir = getConfigDir('type_test');
 
   const modulePath = getModulePath(destinationDir, moduleName);
   const testPath = getTestPath(modulePath);
@@ -37,8 +36,8 @@ it('generate a type', async () => {
   ]);
 
   const files = {
-    type: getFileContent(`${folder}/${destinationDir}/example/ExampleType.js`),
-    typeTest: getFileContent(`${folder}/${destinationTestDir}/example/__tests__/ExampleType.spec.js`),
+    type: getFileContent(path.join(folder, typeFilepath)),
+    typeTest: getFileContent(path.join(folder, typeTestFilepath)),
   };
 
   expect(files).toMatchSnapshot();
@@ -94,7 +93,6 @@ it('generate a type with schema and without timestamps', async () => {
     .toPromise();
 
   const destinationDir = getConfigDir('type');
-  const destinationTestDir = getConfigDir('type_test');
 
   const modulePath = getModulePath(destinationDir, moduleName);
   const testPath = getTestPath(modulePath);

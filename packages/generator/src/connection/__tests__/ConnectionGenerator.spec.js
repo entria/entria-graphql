@@ -9,32 +9,43 @@ import {
 } from '../../../test/helpers';
 
 import { getConfigDir } from '../../config';
+import { uppercaseFirstLetter } from '../../ejsHelpers';
+import { getModulePath } from '../../paths';
 
 const connectionGenerator = path.join(__dirname, '..');
 
 it('generate a connection', async () => {
+  const moduleName = 'example';
+  const name = uppercaseFirstLetter(moduleName);
+
   const folder = await helper.run(connectionGenerator)
-    .withArguments('Example')
+    .withArguments(name)
     .toPromise();
 
   const destinationDir = getConfigDir('connection');
 
+  const modulePath = getModulePath(destinationDir, moduleName);
+  const connectionFilepath = path.join(modulePath, `${name}Connection.js`);
+
   assert.file([
-    `${destinationDir}/ExampleConnection.js`,
+    connectionFilepath,
   ]);
 
   const files = {
-    connection: getFileContent(`${folder}/${destinationDir}/ExampleConnection.js`),
+    connection: getFileContent(path.join(folder, connectionFilepath)),
   };
 
   expect(files).toMatchSnapshot();
 });
 
 it('generate a connection with schema', async () => {
+  const moduleName = 'post';
+  const name = uppercaseFirstLetter(moduleName);
+
   const folder = await helper.run(connectionGenerator)
     .inTmpDir(dir =>
       fs.copySync(
-        getFixturePath('Post'),
+        getFixturePath(name),
         path.join(dir, 'src/modules/post/Post.js'),
       ),
     )
@@ -42,27 +53,16 @@ it('generate a connection with schema', async () => {
     .toPromise();
 
   const destinationDir = getConfigDir('connection');
+  const modulePath = getModulePath(destinationDir, moduleName);
+  const connectionFilepath = path.join(modulePath, `${name}Connection.js`);
 
   assert.file([
-    `${destinationDir}/PostConnection.js`,
+    connectionFilepath,
   ]);
 
   const files = {
-    connection: getFileContent(`${folder}/${destinationDir}/PostConnection.js`),
+    connection: getFileContent(path.join(folder, connectionFilepath)),
   };
 
   expect(files).toMatchSnapshot();
-});
-
-it('should always import connectionDefinitions', async () => {
-  await helper.run(connectionGenerator)
-    .withArguments('Example')
-    .toPromise();
-
-  const destinationDir = getConfigDir('connection');
-  const connectionFile = `${destinationDir}/ExampleConnection.js`;
-
-  assert.fileContent(
-    connectionFile, 'import { connectionDefinitions } from \'graphql-relay\';',
-  );
 });

@@ -3,8 +3,7 @@
 exports[`generate a connection 1`] = `
 Object {
   "connection": "// @flow
-
-import { connectionDefinitions } from 'graphql-relay';
+import { connectionDefinitions } from '../../graphql/connection/CustomConnectionType';
 
 import ExampleType from './ExampleType';
 
@@ -19,8 +18,7 @@ export default connectionDefinitions({
 exports[`generate a connection with schema 1`] = `
 Object {
   "connection": "// @flow
-
-import { connectionDefinitions } from 'graphql-relay';
+import { connectionDefinitions } from '../../graphql/connection/CustomConnectionType';
 
 import PostType from './PostType';
 

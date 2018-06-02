@@ -1,8 +1,7 @@
 // @flow
+import { connectionDefinitions } from '../../graphql/connection/CustomConnectionType';
 
-import { connectionDefinitions } from 'graphql-relay';
-
-import <%= name %>Type from '<%= directories.type %>/<%= name %>Type';
+import <%= name %>Type from './<%= name %>Type';
 
 export default connectionDefinitions({
   name: '<%= name %>',
