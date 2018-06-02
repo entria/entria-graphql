@@ -1,12 +1,15 @@
 // @flow
 import Generator from 'yeoman-generator';
 import pluralize from 'pluralize';
+import path from 'path';
+
 import {
   getMongooseModelSchema,
   getRelativeConfigDir,
   } from '../utils';
 import { getConfigDir } from '../config';
 import { camelCaseText, uppercaseFirstLetter } from '../ejsHelpers';
+import { getModulePath } from '../paths';
 
 class LoaderGenerator extends Generator {
   constructor(args, options) {
@@ -44,7 +47,12 @@ class LoaderGenerator extends Generator {
 
     const pluralName = pluralize(this.options.name);
 
-    const destinationPath = this.destinationPath(`${this.destinationDir}/${name}Loader.js`);
+    const moduleName = this.options.name.toLowerCase();
+    const modulePath = getModulePath(this.destinationDir, moduleName);
+
+    const destinationPath = this.destinationPath(
+      path.join(modulePath, `${name}Loader.js`),
+    );
     const templateVars = {
       name,
       rawName: this.options.name,
