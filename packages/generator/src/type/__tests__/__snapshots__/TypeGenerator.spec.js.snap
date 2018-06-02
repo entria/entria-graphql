@@ -7,22 +7,27 @@ Object {
   GraphQLString,
 } from 'graphql';
 import { globalIdField } from 'graphql-relay';
+import type { GraphQLObjectTypeConfig } from 'graphql';
+import type { GraphQLContext } from '../../TypeDefinition';
 
 import { NodeInterface } from '../../../graphql/interface/NodeInterface';
+import Example from './ExampleLoader';
 
-export default new GraphQLObjectType({
-  name: 'Example',
-  description: 'Represents Example',
-  fields: () => ({
-    id: globalIdField('Example'),
-    example: {
-      type: GraphQLString,
-      description: 'My example field',
-      resolve: obj => obj.example,
-    },
-  }),
-  interfaces: () => [NodeInterface],
-});
+export default new GraphQLObjectType(
+  ({
+    name: 'Example',
+    description: 'Represents Example',
+    fields: () => ({
+      id: globalIdField('Example'),
+      example: {
+        type: GraphQLString,
+        description: 'My example field',
+        resolve: obj => obj.example,
+      },
+    }),
+    interfaces: () => [NodeInterface],
+  }: GraphQLObjectTypeConfig<Example, GraphQLContext>),
+);
 ",
   "typeTest": "import { graphql } from 'graphql';
 import { schema } from '../../schema';
@@ -49,10 +54,13 @@ it('should retrieve a record', async () => {
     }
   \`;
 
+  const variables = {
+
+  };
   const rootValue = {};
   const context = getContext({ user });
 
-  const { errors, data } = await graphql(schema, query, rootValue, context);
+  const { errors, data } = await graphql(schema, query, rootValue, context, variables);
 
   expect(data.node).toBe(null);
   expect(errors).toBe(undefined);
@@ -71,66 +79,71 @@ import {
   GraphQLList,
 } from 'graphql';
 import { globalIdField } from 'graphql-relay';
+import type { GraphQLObjectTypeConfig } from 'graphql';
+import type { GraphQLContext } from '../../TypeDefinition';
 
 import { NodeInterface } from '../../../graphql/interface/NodeInterface';
 import UserType from './UserType';
 import CommentType from './CommentType';
 import UserLoader from './UserLoader';
 import CommentLoader from './CommentLoader';
+import Post from './PostLoader';
 
-export default new GraphQLObjectType({
-  name: 'Post',
-  description: 'Represents Post',
-  fields: () => ({
-    id: globalIdField('Post'),
-    title: {
-      type: GraphQLString,
-      description: '',
-      resolve: obj => obj.title,
-    },
-    user: {
-      type: UserType,
-      description: 'User that created this post',
-      resolve: async (obj, args, context) => await UserLoader.load(context, obj.user),
-    },
-    slug: {
-      type: GraphQLString,
-      description: 'Used for SEO',
-      resolve: obj => obj.slug,
-    },
-    tags: {
-      type: new GraphQLList(GraphQLString),
-      description: '',
-      resolve: obj => obj.tags,
-    },
-    oldSlugs: {
-      type: new GraphQLList(GraphQLString),
-      description: 'Old slugs used by this post',
-      resolve: obj => obj.oldSlugs,
-    },
-    comments: {
-      type: new GraphQLList(CommentType),
-      description: '',
-      resolve: async (obj, args, context) => await CommentLoader.loadCommentsByIds(context, obj.comments),
-    },
-    externalComments: {
-      type: new GraphQLList(CommentType),
-      description: 'Comments from external source',
-      resolve: async (obj, args, context) => await CommentLoader.loadExternalCommentsByIds(context, obj.externalComments),
-    },
-    createdAt: {
-      type: GraphQLString,
-      description: '',
-      resolve: obj => obj.createdAt.toISOString(),
-    },
-    updatedAt: {
-      type: GraphQLString,
-      description: '',
-      resolve: obj => obj.updatedAt.toISOString(),
-    },
-  }),
-  interfaces: () => [NodeInterface],
-});
+export default new GraphQLObjectType(
+  ({
+    name: 'Post',
+    description: 'Represents Post',
+    fields: () => ({
+      id: globalIdField('Post'),
+      title: {
+        type: GraphQLString,
+        description: '',
+        resolve: obj => obj.title,
+      },
+      user: {
+        type: UserType,
+        description: 'User that created this post',
+        resolve: async (obj, args, context) => await UserLoader.load(context, obj.user),
+      },
+      slug: {
+        type: GraphQLString,
+        description: 'Used for SEO',
+        resolve: obj => obj.slug,
+      },
+      tags: {
+        type: new GraphQLList(GraphQLString),
+        description: '',
+        resolve: obj => obj.tags,
+      },
+      oldSlugs: {
+        type: new GraphQLList(GraphQLString),
+        description: 'Old slugs used by this post',
+        resolve: obj => obj.oldSlugs,
+      },
+      comments: {
+        type: new GraphQLList(CommentType),
+        description: '',
+        resolve: async (obj, args, context) => await CommentLoader.loadCommentsByIds(context, obj.comments),
+      },
+      externalComments: {
+        type: new GraphQLList(CommentType),
+        description: 'Comments from external source',
+        resolve: async (obj, args, context) => await CommentLoader.loadExternalCommentsByIds(context, obj.externalComments),
+      },
+      createdAt: {
+        type: GraphQLString,
+        description: '',
+        resolve: obj => obj.createdAt.toISOString(),
+      },
+      updatedAt: {
+        type: GraphQLString,
+        description: '',
+        resolve: obj => obj.updatedAt.toISOString(),
+      },
+    }),
+    interfaces: () => [NodeInterface],
+  }: GraphQLObjectTypeConfig<Post, GraphQLContext>),
+);
 ",
   "typeTest": "import { graphql } from 'graphql';
 import { schema } from '../../schema';
@@ -157,10 +170,13 @@ it('should retrieve a record', async () => {
     }
   \`;
 
+  const variables = {
+
+  };
   const rootValue = {};
   const context = getContext({ user });
 
-  const { errors, data } = await graphql(schema, query, rootValue, context);
+  const { errors, data } = await graphql(schema, query, rootValue, context, variables);
 
   expect(data.node).toBe(null);
   expect(errors).toBe(undefined);
@@ -179,42 +195,47 @@ import {
   GraphQLBoolean,
 } from 'graphql';
 import { globalIdField } from 'graphql-relay';
+import type { GraphQLObjectTypeConfig } from 'graphql';
+import type { GraphQLContext } from '../../TypeDefinition';
 
 import { NodeInterface } from '../../../graphql/interface/NodeInterface';
+import User from './UserLoader';
 
-export default new GraphQLObjectType({
-  name: 'User',
-  description: 'Represents User',
-  fields: () => ({
-    id: globalIdField('User'),
-    name: {
-      type: GraphQLString,
-      description: '',
-      resolve: obj => obj.name,
-    },
-    password: {
-      type: GraphQLString,
-      description: '',
-      resolve: obj => obj.password,
-    },
-    email: {
-      type: GraphQLString,
-      description: '',
-      resolve: obj => obj.email,
-    },
-    active: {
-      type: GraphQLBoolean,
-      description: '',
-      resolve: obj => obj.active,
-    },
-    lastLoginAt: {
-      type: GraphQLString,
-      description: '',
-      resolve: obj => obj.lastLoginAt.toISOString(),
-    },
-  }),
-  interfaces: () => [NodeInterface],
-});
+export default new GraphQLObjectType(
+  ({
+    name: 'User',
+    description: 'Represents User',
+    fields: () => ({
+      id: globalIdField('User'),
+      name: {
+        type: GraphQLString,
+        description: '',
+        resolve: obj => obj.name,
+      },
+      password: {
+        type: GraphQLString,
+        description: '',
+        resolve: obj => obj.password,
+      },
+      email: {
+        type: GraphQLString,
+        description: '',
+        resolve: obj => obj.email,
+      },
+      active: {
+        type: GraphQLBoolean,
+        description: '',
+        resolve: obj => obj.active,
+      },
+      lastLoginAt: {
+        type: GraphQLString,
+        description: '',
+        resolve: obj => obj.lastLoginAt.toISOString(),
+      },
+    }),
+    interfaces: () => [NodeInterface],
+  }: GraphQLObjectTypeConfig<User, GraphQLContext>),
+);
 ",
   "typeTest": "import { graphql } from 'graphql';
 import { schema } from '../../schema';
@@ -241,10 +262,13 @@ it('should retrieve a record', async () => {
     }
   \`;
 
+  const variables = {
+
+  };
   const rootValue = {};
   const context = getContext({ user });
 
-  const { errors, data } = await graphql(schema, query, rootValue, context);
+  const { errors, data } = await graphql(schema, query, rootValue, context, variables);
 
   expect(data.node).toBe(null);
   expect(errors).toBe(undefined);

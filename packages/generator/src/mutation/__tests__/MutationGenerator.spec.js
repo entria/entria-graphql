@@ -39,7 +39,7 @@ it('generate mutation files with schema', async () => {
     .inTmpDir(dir =>
       fs.copySync(
         getFixturePath('Post'),
-        path.join(dir, 'src/model/Post.js'),
+        path.join(dir, 'src/modules/post/Post.js'),
       ),
     )
     .withArguments('Post Post')
