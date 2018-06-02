@@ -4,8 +4,8 @@
     "connection": "",
     "loader": "",
     "model": "",
-    "mutation": "mutation",
-    "mutation_test": "mutation",
+    "mutation": "",
+    "mutation_test": "",
     "type": "",
     "type_test": "",
     "interface": "../../../graphql/interface"

@@ -1,5 +1,4 @@
 // @flow
-
 import {
   GraphQLString,
   <%_ for (i in schema.addDependencies) { -%>
@@ -11,12 +10,10 @@ import {
   toGlobalId,
 } from 'graphql-relay';
 
-import <%= name %> from '<%= directories.model %>/<%= name %>';
+import <%= name %>Model from '../<%= name %>Model';
 
-import <%= name %>Loader from '<%= directories.loader %>/<%= name %>Loader';
-import <%= name %>Connection from '<%= directories.connection %>/<%= name %>Connection';
-
-import ViewerType from '<%= directories.type %>/ViewerType';
+import <%= name %>Loader from '../<%= name %>Loader';
+import <%= name %>Connection from '../<%= name %>Connection';
 
 export default mutationWithClientMutationId({
   name: '<%= name %>Add',
@@ -40,7 +37,7 @@ export default mutationWithClientMutationId({
     } = args;
 
     // Create new record
-    const <%= camelCaseName %> = await new <%= name %>({
+    const <%= camelCaseName %> = await new <%= name %>Model({
       <%_ for (field of schema.fields) { -%>
       <%- field.name %>,
       <%_ } -%>
@@ -72,10 +69,6 @@ export default mutationWithClientMutationId({
           node: <%= camelCaseName %>,
         };
       },
-    },
-    viewer: {
-      type: ViewerType,
-      resolve: async (obj, args, { user }) => user,
     },
     error: {
       type: GraphQLString,

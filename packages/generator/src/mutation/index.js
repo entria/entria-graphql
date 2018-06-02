@@ -1,11 +1,13 @@
 // @flow
 import Generator from 'yeoman-generator';
+import path from 'path';
 import {
   getMongooseModelSchema,
   getRelativeConfigDir,
   } from '../utils';
 import { getConfigDir } from '../config';
 import { camelCaseText, uppercaseFirstLetter } from '../ejsHelpers';
+import { getModulePath, getMutationPath, getTestPath } from '../paths';
 
 class MutationGenerator extends Generator {
   constructor(args, options) {
@@ -105,13 +107,19 @@ class MutationGenerator extends Generator {
       directories,
     };
 
-    // TODO: generate type and loader that do not exist yet
+    const moduleName = this.options.name.toLowerCase();
+    const modulePath = getModulePath(this.destinationDir, moduleName);
+    const mutationPath = getMutationPath(modulePath);
 
     Object.keys(mutations).forEach((mutationType) => {
       const { template, fileName } = mutations[mutationType];
 
+      const mutationFilePath = path.join(mutationPath, `${fileName}Mutation.js`);
+
       this.fs.copyTpl(
-        this.templatePath(template[templateType]), this._mutationPath(fileName), templateVars,
+        this.templatePath(template[templateType]),
+        mutationFilePath,
+        templateVars,
       );
 
       this._generateMutationTest({
@@ -126,7 +134,14 @@ class MutationGenerator extends Generator {
   _generateMutationTest({ name, mutationName, template, schema }) {
     const templatePath = this.templatePath(`test/${template}`);
 
-    const destinationPath = this.destinationPath(`${this.destinationDir}/__tests__/${mutationName}Mutation.spec.js`);
+    const moduleName = this.options.name.toLowerCase();
+    const modulePath = getModulePath(this.destinationDir, moduleName);
+    const mutationPath = getMutationPath(modulePath);
+    const mutationTestPath = getTestPath(mutationPath);
+
+    const destinationPath = this.destinationPath(
+      path.join(mutationTestPath, `${mutationName}Mutation.spec.js`),
+    );
 
     const directories = this._getConfigDirectories();
 

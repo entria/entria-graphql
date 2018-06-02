@@ -1,5 +1,4 @@
 // @flow
-
 import {
   GraphQLString,
   GraphQLNonNull,
@@ -13,10 +12,10 @@ import {
   fromGlobalId,
 } from 'graphql-relay';
 
-import <%= name %> from '<%= directories.model %>/<%= name %>';
+import <%= name %>Model from '../<%= name %>Model';
 
-import <%= name %>Type from '<%= directories.type %>/<%= name %>Type';
-import <%= name %>Loader from '<%= directories.loader %>/<%= name %>Loader';
+import <%= name %>Type from '../<%= name %>Type';
+import <%= name %>Loader from '../<%= name %>Loader';
 
 export default mutationWithClientMutationId({
   name: '<%= name %>Edit',
@@ -46,7 +45,7 @@ export default mutationWithClientMutationId({
     } = args;
 
     // Check if the provided ID is valid
-    const <%= camelCaseName %> = await <%= name %>.findOne({
+    const <%= camelCaseName %> = await <%= name %>Model.findOne({
       _id: fromGlobalId(id).id,
     });
 

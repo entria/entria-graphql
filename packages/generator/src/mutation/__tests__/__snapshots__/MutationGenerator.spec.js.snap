@@ -3,7 +3,6 @@
 exports[`generate mutation files 1`] = `
 Object {
   "add": "// @flow
-
 import {
   GraphQLString,
   GraphQLNonNull,
@@ -13,10 +12,10 @@ import {
   toGlobalId,
 } from 'graphql-relay';
 
-import Example from '../model/Example';
+import ExampleModel from '../ExampleModel';
 
-import ExampleLoader from '../loader/ExampleLoader';
-import ExampleConnection from '../connection/ExampleConnection';
+import ExampleLoader from '../ExampleLoader';
+import ExampleConnection from '../ExampleConnection';
 
 export default mutationWithClientMutationId({
   name: 'ExampleAdd',
@@ -70,27 +69,29 @@ export default mutationWithClientMutationId({
 import { schema } from '../../schema';
 import { setupTest, getContext } from '../../../test/helper';
 
-import User from '../model/User';
-import Example from '../model/Example';
+import { User } from '.';
+import Example from './Example';
 
 beforeEach(async () => await setupTest());
 
 it('should not allow anonymous user', async () => {
+  //language=GraphQL
   const query = \`
-    mutation M {
+    mutation M($example: String) {
       ExampleAdd(input: {
-        exampleField: \\"Example field\\"
+        example: $example
       }) {
         exampleFieldToRetrieve
       }
     }
   \`;
 
+  const variables = {
+  };
   const rootValue = {};
-  // No user should be passed to context since we are testing an anonymous session
   const context = getContext();
 
-  const result = await graphql(schema, query, rootValue, context);
+  const result = await graphql(schema, query, rootValue, context, variables);
 
   expect(result).toMatchSnapshot();
 });
@@ -103,26 +104,28 @@ it('should create a record on database', async () => {
 
   await user.save();
 
+  //language=GraphQL
   const query = \`
-    mutation M {
+    mutation M($example: String) {
       ExampleAdd(input: {
-        exampleField: \\"Example field\\"
+        example: $example
       }) {
         exampleFieldToRetrieve
       }
     }
   \`;
 
+  const variables = {
+  };
   const rootValue = {};
   const context = getContext({ user });
 
-  const result = await graphql(schema, query, rootValue, context);
+  const result = await graphql(schema, query, rootValue, context, variables);
 
   expect(result).toMatchSnapshot();
 });
 ",
   "edit": "// @flow
-
 import {
   GraphQLID,
   GraphQLString,
@@ -133,10 +136,10 @@ import {
   fromGlobalId,
 } from 'graphql-relay';
 
-import Example from '../model/Example';
+import ExampleModel from '../ExampleModel';
 
-import ExampleType from '../type/ExampleType';
-import ExampleLoader from '../loader/ExampleLoader';
+import ExampleType from '../ExampleType';
+import ExampleLoader from './ExampleLoader';
 
 export default mutationWithClientMutationId({
   name: 'ExampleEdit',
@@ -162,7 +165,7 @@ export default mutationWithClientMutationId({
     } = args;
 
     // Check if the provided ID is valid
-    const example = await Example.findOne({
+    const example = await ExampleModel.findOne({
       _id: fromGlobalId(id).id,
     });
 
@@ -198,12 +201,13 @@ import { toGlobalId } from 'graphql-relay';
 import { schema } from '../../schema';
 import { setupTest, getContext } from '../../../test/helper';
 
-import User from '../model/User';
-import Example from '../model/Example';
+import User from './User';
+import Example from './Example';
 
 beforeEach(async () => await setupTest());
 
 it('should not allow anonymous user', async () => {
+  //language=GraphQL
   const query = \`
     mutation M {
       ExampleEdit(input: {
@@ -215,11 +219,12 @@ it('should not allow anonymous user', async () => {
     }
   \`;
 
+  const variables = {
+  };
   const rootValue = {};
-  // No user should be passed to context since we are testing an anonymous session
   const context = getContext();
 
-  const result = await graphql(schema, query, rootValue, context);
+  const result = await graphql(schema, query, rootValue, context, variables);
 
   expect(result).toMatchSnapshot();
 });
@@ -232,6 +237,7 @@ it('should create a record on database', async () => {
 
   await user.save();
 
+  //language=GraphQL
   const query = \`
     mutation M {
       ExampleEdit(input: {
@@ -243,10 +249,12 @@ it('should create a record on database', async () => {
     }
   \`;
 
+  const variables = {
+  };
   const rootValue = {};
   const context = getContext({ user });
 
-  const result = await graphql(schema, query, rootValue, context);
+  const result = await graphql(schema, query, rootValue, context, variables);
 
   expect(result).toMatchSnapshot();
 });
@@ -257,7 +265,6 @@ it('should create a record on database', async () => {
 exports[`generate mutation files with schema 1`] = `
 Object {
   "add": "// @flow
-
 import {
   GraphQLString,
   GraphQLID,
@@ -269,12 +276,10 @@ import {
   toGlobalId,
 } from 'graphql-relay';
 
-import Post from '../model/Post';
+import PostModel from '../PostModel';
 
-import PostLoader from '../loader/PostLoader';
-import PostConnection from '../connection/PostConnection';
-
-import ViewerType from '../type/ViewerType';
+import PostLoader from '../PostLoader';
+import PostConnection from '../PostConnection';
 
 export default mutationWithClientMutationId({
   name: 'PostAdd',
@@ -318,7 +323,7 @@ export default mutationWithClientMutationId({
     } = args;
 
     // Create new record
-    const post = await new Post({
+    const post = await new PostModel({
       title,
       user,
       slug,
@@ -355,10 +360,6 @@ export default mutationWithClientMutationId({
         };
       },
     },
-    viewer: {
-      type: ViewerType,
-      resolve: async (obj, args, { user }) => user,
-    },
     error: {
       type: GraphQLString,
       resolve: ({ error }) => error,
@@ -370,12 +371,13 @@ export default mutationWithClientMutationId({
 import { schema } from '../../schema';
 import { setupTest, getContext } from '../../../test/helper';
 
-import User from '../model/User';
-import Post from '../model/Post';
+import User from './User';
+import Post from './Post';
 
 beforeEach(async () => await setupTest());
 
 it('should not allow anonymous user', async () => {
+  //language=GraphQL
   const query = \`
     mutation M {
       PostAdd(input: {
@@ -402,11 +404,12 @@ it('should not allow anonymous user', async () => {
     }
   \`;
 
+  const variables = {
+  };
   const rootValue = {};
-  // No user should be passed to context since we are testing an anonymous session
   const context = getContext();
 
-  const result = await graphql(schema, query, rootValue, context);
+  const result = await graphql(schema, query, rootValue, context, variables);
 
   expect(result).toMatchSnapshot();
 });
@@ -419,6 +422,7 @@ it('should create a record on database', async () => {
 
   await user.save();
 
+  //language=GraphQL
   const query = \`
     mutation M {
       PostAdd(input: {
@@ -445,16 +449,17 @@ it('should create a record on database', async () => {
     }
   \`;
 
+  const variables = {
+  };
   const rootValue = {};
   const context = getContext({ user });
 
-  const result = await graphql(schema, query, rootValue, context);
+  const result = await graphql(schema, query, rootValue, context, variables);
 
   expect(result).toMatchSnapshot();
 });
 ",
   "edit": "// @flow
-
 import {
   GraphQLString,
   GraphQLNonNull,
@@ -466,10 +471,10 @@ import {
   fromGlobalId,
 } from 'graphql-relay';
 
-import Post from '../model/Post';
+import PostModel from '../PostModel';
 
-import PostType from '../type/PostType';
-import PostLoader from '../loader/PostLoader';
+import PostType from '../PostType';
+import PostLoader from '../PostLoader';
 
 export default mutationWithClientMutationId({
   name: 'PostEdit',
@@ -519,7 +524,7 @@ export default mutationWithClientMutationId({
     } = args;
 
     // Check if the provided ID is valid
-    const post = await Post.findOne({
+    const post = await PostModel.findOne({
       _id: fromGlobalId(id).id,
     });
 
@@ -566,8 +571,8 @@ import { toGlobalId } from 'graphql-relay';
 import { schema } from '../../schema';
 import { setupTest, getContext } from '../../../test/helper';
 
-import User from '../model/User';
-import Post from '../model/Post';
+import User from './User';
+import Post from './Post';
 
 beforeEach(async () => await setupTest());
 
@@ -587,6 +592,7 @@ it('should not allow anonymous user', async () => {
 
   const postId = toGlobalId('Post', post._id);
 
+  //language=GraphQL
   const query = \`
     mutation M {
       PostEdit(input: {
@@ -606,11 +612,11 @@ it('should not allow anonymous user', async () => {
     }
   \`;
 
+  const variables = {};
   const rootValue = {};
-  // No user should be passed to context since we are testing an anonymous session
   const context = getContext();
 
-  const result = await graphql(schema, query, rootValue, context);
+  const result = await graphql(schema, query, rootValue, context, variables);
 
   expect(result).toMatchSnapshot();
 });
@@ -638,6 +644,7 @@ it('should edit a record on database', async () => {
 
   const postId = toGlobalId('Post', post._id);
 
+  //language=GraphQL
   const query = \`
     mutation M {
       PostEdit(input: {
@@ -657,10 +664,12 @@ it('should edit a record on database', async () => {
     }
   \`;
 
+  const variables = {
+  };
   const rootValue = {};
   const context = getContext({ user });
 
-  const result = await graphql(schema, query, rootValue, context);
+  const result = await graphql(schema, query, rootValue, context, variables);
 
   expect(result).toMatchSnapshot();
 });

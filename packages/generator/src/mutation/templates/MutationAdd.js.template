@@ -1,5 +1,4 @@
 // @flow
-
 import {
   GraphQLString,
   GraphQLNonNull,
@@ -9,10 +8,10 @@ import {
   toGlobalId,
 } from 'graphql-relay';
 
-import <%= name %> from '<%= directories.model %>/<%= name %>';
+import <%= name %>Model from '../<%= name %>Model';
 
-import <%= name %>Loader from '<%= directories.loader %>/<%= name %>Loader';
-import <%= name %>Connection from '<%= directories.connection %>/<%= name %>Connection';
+import <%= name %>Loader from '../<%= name %>Loader';
+import <%= name %>Connection from '../<%= name %>Connection';
 
 export default mutationWithClientMutationId({
   name: '<%= name %>Add',

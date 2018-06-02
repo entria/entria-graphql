@@ -9,6 +9,7 @@ import <%= name %> from '<%= directories.model %>/<%= name %>';
 beforeEach(async () => await setupTest());
 
 it('should not allow anonymous user', async () => {
+  //language=GraphQL
   const query = `
     mutation M {
       <%= mutationName %>(input: {
@@ -20,11 +21,12 @@ it('should not allow anonymous user', async () => {
     }
   `;
 
+  const variables = {
+  };
   const rootValue = {};
-  // No user should be passed to context since we are testing an anonymous session
   const context = getContext();
 
-  const result = await graphql(schema, query, rootValue, context);
+  const result = await graphql(schema, query, rootValue, context, variables);
 
   expect(result).toMatchSnapshot();
 });
@@ -37,6 +39,7 @@ it('should create a record on database', async () => {
 
   await user.save();
 
+  //language=GraphQL
   const query = `
     mutation M {
       <%= mutationName %>(input: {
@@ -48,10 +51,12 @@ it('should create a record on database', async () => {
     }
   `;
 
+  const variables = {
+  };
   const rootValue = {};
   const context = getContext({ user });
 
-  const result = await graphql(schema, query, rootValue, context);
+  const result = await graphql(schema, query, rootValue, context, variables);
 
   expect(result).toMatchSnapshot();
 });
