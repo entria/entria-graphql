@@ -8,7 +8,7 @@ Object {
 } from 'graphql';
 import { globalIdField } from 'graphql-relay';
 
-import { NodeInterface } from '../interface/NodeInterface';
+import { NodeInterface } from '../../../graphql/interface/NodeInterface';
 
 export default new GraphQLObjectType({
   name: 'Example',
@@ -72,11 +72,11 @@ import {
 } from 'graphql';
 import { globalIdField } from 'graphql-relay';
 
-import { NodeInterface } from '../interface/NodeInterface';
+import { NodeInterface } from '../../../graphql/interface/NodeInterface';
 import UserType from './UserType';
 import CommentType from './CommentType';
-import UserLoader from '../loader/UserLoader';
-import CommentLoader from '../loader/CommentLoader';
+import UserLoader from './UserLoader';
+import CommentLoader from './CommentLoader';
 
 export default new GraphQLObjectType({
   name: 'Post',
@@ -180,7 +180,7 @@ import {
 } from 'graphql';
 import { globalIdField } from 'graphql-relay';
 
-import { NodeInterface } from '../interface/NodeInterface';
+import { NodeInterface } from '../../../graphql/interface/NodeInterface';
 
 export default new GraphQLObjectType({
   name: 'User',

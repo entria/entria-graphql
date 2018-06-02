@@ -8,7 +8,7 @@ import {
   getFixturePath,
 } from '../../../test/helpers';
 
-import { getConfigDir } from '../../utils';
+import { getConfigDir } from '../../config';
 
 const connectionGenerator = path.join(__dirname, '..');
 

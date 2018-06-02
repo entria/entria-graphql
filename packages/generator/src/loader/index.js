@@ -3,11 +3,10 @@ import Generator from 'yeoman-generator';
 import pluralize from 'pluralize';
 import {
   getMongooseModelSchema,
-  getConfigDir,
   getRelativeConfigDir,
-  camelCaseText,
-  uppercaseFirstLetter,
-} from '../utils';
+  } from '../utils';
+import { getConfigDir } from '../config';
+import { camelCaseText, uppercaseFirstLetter } from '../ejsHelpers';
 
 class LoaderGenerator extends Generator {
   constructor(args, options) {
