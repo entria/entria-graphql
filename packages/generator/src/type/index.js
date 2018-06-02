@@ -1,11 +1,13 @@
 // @flow
 import Generator from 'yeoman-generator';
+import path from 'path';
 import {
   getMongooseModelSchema,
   getRelativeConfigDir,
 } from '../utils';
 import { getConfigDir } from '../config';
 import { uppercaseFirstLetter } from '../ejsHelpers';
+import { getModulePath, getTestPath } from '../paths';
 
 class TypeGenerator extends Generator {
   constructor(args, options) {
@@ -42,8 +44,11 @@ class TypeGenerator extends Generator {
       this.templatePath('TypeWithSchema.js.template')
       : this.templatePath('Type.js.template');
 
+    const moduleName = this.options.name.toLowerCase();
+    const modulePath = getModulePath(this.destinationDir, moduleName);
+
     const destinationPath = this.destinationPath(
-      `${this.destinationDir}/${this.options.name.toLowerCase()}/${typeFileName}.js`,
+      path.join(modulePath, `${typeFileName}.js`),
     );
     const templateVars = {
       name,
@@ -66,8 +71,13 @@ class TypeGenerator extends Generator {
   _generateTypeTest({ name, schema }) {
     const templatePath = this.templatePath('test/Type.js.template');
 
+    const moduleName = this.options.name.toLowerCase();
+    const testPath = getTestPath(
+      getModulePath(this.destinationDir, moduleName),
+    );
+
     const destinationPath = this.destinationPath(
-      `${this.destinationDir}/${this.options.name.toLowerCase()}/__tests__/${name}Type.spec.js`,
+      path.join(testPath, `${name}Type.spec.js`),
     );
 
     const directories = this._getConfigDirectories();

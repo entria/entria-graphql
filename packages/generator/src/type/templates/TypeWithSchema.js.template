@@ -7,6 +7,8 @@ import {
   <%_ } -%>
 } from 'graphql';
 import { globalIdField } from 'graphql-relay';
+import type { GraphQLObjectTypeConfig } from 'graphql';
+import type { GraphQLContext } from '../../TypeDefinition';
 
 import { NodeInterface } from '<%= directories.interface %>/NodeInterface';
 <%_ for (i in schema.typeDependencies) { -%>
@@ -15,19 +17,22 @@ import <%= schema.typeDependencies[i] %> from '<%= directories.type %>/<%=schema
 <%_ for (i in schema.loaderDependencies) { -%>
 import <%= schema.loaderDependencies[i] %> from '<%= directories.loader %>/<%=schema.loaderDependencies[i]%>';
 <%_ } -%>
+import <%= name %> from './<%= name %>Loader';
 
-export default new GraphQLObjectType({
-  name: '<%= name %>',
-  description: 'Represents <%= name %>',
-  fields: () => ({
-    id: globalIdField('<%= name %>'),
-    <%_ for (field of schema.fields) { -%>
-    <%- field.name %>: {
-      type: <%= field.type %>,
-      description: '<%= field.description %>',
-      resolve: <%if(field.resolveArgs){%><%=field.resolveArgs%><%}else{ %>obj<%} %> => <%= field.resolve %>,
-    },
-    <%_ } -%>
-  }),
-  interfaces: () => [NodeInterface],
-});
+export default new GraphQLObjectType(
+  ({
+    name: '<%= name %>',
+    description: 'Represents <%= name %>',
+    fields: () => ({
+      id: globalIdField('<%= name %>'),
+      <%_ for (field of schema.fields) { -%>
+      <%- field.name %>: {
+        type: <%= field.type %>,
+        description: '<%= field.description %>',
+        resolve: <%if(field.resolveArgs){%><%=field.resolveArgs%><%}else{ %>obj<%} %> => <%= field.resolve %>,
+      },
+      <%_ } -%>
+    }),
+    interfaces: () => [NodeInterface],
+  }: GraphQLObjectTypeConfig<<%= name %>, GraphQLContext>),
+);

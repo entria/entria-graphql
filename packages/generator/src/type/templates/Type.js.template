@@ -3,19 +3,24 @@ import {
   GraphQLString,
 } from 'graphql';
 import { globalIdField } from 'graphql-relay';
+import type { GraphQLObjectTypeConfig } from 'graphql';
+import type { GraphQLContext } from '../../TypeDefinition';
 
 import { NodeInterface } from '<%= directories.interface %>/NodeInterface';
+import <%= name %> from './<%= name %>Loader';
 
-export default new GraphQLObjectType({
-  name: '<%= name %>',
-  description: 'Represents <%= name %>',
-  fields: () => ({
-    id: globalIdField('<%= name %>'),
-    example: {
-      type: GraphQLString,
-      description: 'My example field',
-      resolve: obj => obj.example,
-    },
-  }),
-  interfaces: () => [NodeInterface],
-});
+export default new GraphQLObjectType(
+  ({
+    name: '<%= name %>',
+    description: 'Represents <%= name %>',
+    fields: () => ({
+      id: globalIdField('<%= name %>'),
+      example: {
+        type: GraphQLString,
+        description: 'My example field',
+        resolve: obj => obj.example,
+      },
+    }),
+    interfaces: () => [NodeInterface],
+  }: GraphQLObjectTypeConfig<<%= name %>, GraphQLContext>),
+);

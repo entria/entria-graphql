@@ -23,10 +23,13 @@ it('should retrieve a record', async () => {
     }
   `;
 
+  const variables = {
+
+  };
   const rootValue = {};
   const context = getContext({ user });
 
-  const { errors, data } = await graphql(schema, query, rootValue, context);
+  const { errors, data } = await graphql(schema, query, rootValue, context, variables);
 
   expect(data.node).toBe(null);
   expect(errors).toBe(undefined);

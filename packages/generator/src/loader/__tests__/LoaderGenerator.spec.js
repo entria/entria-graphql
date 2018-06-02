@@ -34,7 +34,7 @@ it('generate a loader with schema', async () => {
     .inTmpDir(dir =>
       fs.copySync(
         getFixturePath('Post'),
-        path.join(dir, 'src/model/Post.js'),
+        path.join(dir, 'src/modules/post/Post.js'),
       ),
     )
     .withArguments('Post Post')
@@ -58,7 +58,7 @@ it('generate a loader with schema and without timestamps', async () => {
     .inTmpDir(dir =>
       fs.copySync(
         getFixturePath('User'),
-        path.join(dir, 'src/model/User.js'),
+        path.join(dir, 'src/modules/user/User.js'),
       ),
     )
     .withArguments('User User')
