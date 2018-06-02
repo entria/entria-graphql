@@ -35,6 +35,9 @@
   ],
   "license": "MIT",
   "preferGlobal": true,
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "http://github.com/entria/create-graphql"

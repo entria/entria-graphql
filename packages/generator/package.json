@@ -43,11 +43,14 @@
     "relay",
     "server",
     "yeoman",
-    "yo",
-    "yeoman-generator"
+    "yeoman-generator",
+    "yo"
   ],
   "license": "MIT",
   "preferGlobal": true,
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/entria/create-graphql"
