@@ -3,11 +3,11 @@
 exports[`generate a loader 1`] = `
 Object {
   "loader": "// @flow
-
 import DataLoader from 'dataloader';
-import ExampleModel from '../model/Example';
-import connectionFromMongoCursor from './ConnectionFromMongoCursor';
-import mongooseLoader from './mongooseLoader';
+import ExampleModel from './ExampleModel';
+import { connectionFromMongoCursor, mongooseLoader } from '@entria/graphql-mongoose-loader';
+import type { ConnectionArguments } from 'graphql-relay';
+import type { GraphQLContext } from '../../TypeDefinition';
 
 type ExampleType = {
   id: string,
@@ -29,26 +29,27 @@ export default class Example {
 
 export const getLoader = () => new DataLoader(ids => mongooseLoader(ExampleModel, ids));
 
-const viewerCanSee = (viewer, data) => {
-  // TODO: handle security
-  return true;
-};
+const viewerCanSee = () => true;
 
-export const load = async ({ user: viewer, dataloaders }, id) => {
+export const load = async ({ user: viewer, dataloaders }: GraphQLContext, id: string) => {
   if (!id) return null;
 
-  const data = await dataloaders.ExampleLoader.load(id.toString());
+  try {
+    const data = await dataloaders.ExampleLoader.load(id.toString());
 
-  if (!data) return null;
+    if (!data) return null;
 
-  return viewerCanSee(viewer, data) ? new Example(data) : null;
+    return viewerCanSee() ? new Example(data) : null;
+  } catch (err) {
+    return null;
+  }
 };
 
-export const clearCache = ({ dataloaders }, id) => {
+export const clearCache = ({ dataloaders }: GraphQLContext, id: string) => {
   return dataloaders.ExampleLoader.clear(id.toString());
 };
 
-export const loadExamples = async (context, args) => {
+export const loadExamples = async (context: GraphQLContext, args: ConnectionArguments) => {
   // TODO: specify conditions
   const examples = ExampleModel.find({});
 
@@ -66,11 +67,10 @@ export const loadExamples = async (context, args) => {
 exports[`generate a loader with schema 1`] = `
 Object {
   "loader": "// @flow
-
 import DataLoader from 'dataloader';
-import PostModel from '../model/Post';
-import connectionFromMongoCursor from './ConnectionFromMongoCursor';
-import mongooseLoader from './mongooseLoader';
+import PostModel from './PostModel';
+import { connectionFromMongoCursor, mongooseLoader } from '@entria/graphql-mongoose-loader';
+import type { GraphQLContext } from '../../TypeDefinition';
 
 type PostType = {
   id: string,
@@ -116,26 +116,27 @@ export default class Post {
 
 export const getLoader = () => new DataLoader(ids => mongooseLoader(PostModel, ids));
 
-const viewerCanSee = (viewer, data) => {
-  // TODO: handle security
-  return true;
-};
+const viewerCanSee = () => true;
 
-export const load = async ({ user: viewer, dataloaders }, id) => {
+export const load = async ({ user: viewer, dataloaders }: GraphQLContext, id: string) => {
   if (!id) return null;
 
-  const data = await dataloaders.PostLoader.load(id.toString());
+  try {
+    const data = await dataloaders.PostLoader.load(id.toString());
 
-  if (!data) return null;
+    if (!data) return null;
 
-  return viewerCanSee(viewer, data) ? new Post(data) : null;
+    return viewerCanSee() ? new Post(data) : null;
+  } catch (err) {
+    return null
+  };
 };
 
-export const clearCache = ({ dataloaders }, id) => {
+export const clearCache = ({ dataloaders }: GraphQLContext, id: string) => {
   return dataloaders.PostLoader.clear(id.toString());
 };
 
-export const loadPosts = async (context, args) => {
+export const loadPosts = async (context: GraphQLContext, args: ConnectionArguments) => {
   // TODO: specify conditions
   const posts = PostModel.find({});
 
@@ -153,11 +154,10 @@ export const loadPosts = async (context, args) => {
 exports[`generate a loader with schema and without timestamps 1`] = `
 Object {
   "loader": "// @flow
-
 import DataLoader from 'dataloader';
-import UserModel from '../model/User';
-import connectionFromMongoCursor from './ConnectionFromMongoCursor';
-import mongooseLoader from './mongooseLoader';
+import UserModel from './UserModel';
+import { connectionFromMongoCursor, mongooseLoader } from '@entria/graphql-mongoose-loader';
+import type { GraphQLContext } from '../../TypeDefinition';
 
 type UserType = {
   id: string,
@@ -191,26 +191,27 @@ export default class User {
 
 export const getLoader = () => new DataLoader(ids => mongooseLoader(UserModel, ids));
 
-const viewerCanSee = (viewer, data) => {
-  // TODO: handle security
-  return true;
-};
+const viewerCanSee = () => true;
 
-export const load = async ({ user: viewer, dataloaders }, id) => {
+export const load = async ({ user: viewer, dataloaders }: GraphQLContext, id: string) => {
   if (!id) return null;
 
-  const data = await dataloaders.UserLoader.load(id.toString());
+  try {
+    const data = await dataloaders.UserLoader.load(id.toString());
 
-  if (!data) return null;
+    if (!data) return null;
 
-  return viewerCanSee(viewer, data) ? new User(data) : null;
+    return viewerCanSee() ? new User(data) : null;
+  } catch (err) {
+    return null
+  };
 };
 
-export const clearCache = ({ dataloaders }, id) => {
+export const clearCache = ({ dataloaders }: GraphQLContext, id: string) => {
   return dataloaders.UserLoader.clear(id.toString());
 };
 
-export const loadUsers = async (context, args) => {
+export const loadUsers = async (context: GraphQLContext, args: ConnectionArguments) => {
   // TODO: specify conditions
   const users = UserModel.find({});
 

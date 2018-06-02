@@ -8,33 +8,44 @@ import {
   getFixturePath,
 } from '../../../test/helpers';
 import { getConfigDir } from '../../config';
+import { uppercaseFirstLetter } from '../../ejsHelpers';
+import { getModulePath } from '../../paths';
 
 const loaderGenerator = path.join(__dirname, '..');
 
 it('generate a loader', async () => {
+  const moduleName = 'example';
+  const name = uppercaseFirstLetter(moduleName);
+
   const folder = await helper.run(loaderGenerator)
-    .withArguments('Example')
+    .withArguments(name)
     .toPromise();
 
   const destinationDir = getConfigDir('loader');
 
+  const modulePath = getModulePath(destinationDir, moduleName);
+  const loaderFilepath = path.join(modulePath, `${name}Loader.js`);
+
   assert.file([
-    `${destinationDir}/ExampleLoader.js`,
+    loaderFilepath,
   ]);
 
   const files = {
-    loader: getFileContent(`${folder}/${destinationDir}/ExampleLoader.js`),
+    loader: getFileContent(path.join(folder, loaderFilepath)),
   };
 
   expect(files).toMatchSnapshot();
 });
 
 it('generate a loader with schema', async () => {
+  const moduleName = 'post';
+  const name = uppercaseFirstLetter(moduleName);
+
   const folder = await helper.run(loaderGenerator)
     .inTmpDir(dir =>
       fs.copySync(
-        getFixturePath('Post'),
-        path.join(dir, 'src/modules/post/Post.js'),
+        getFixturePath(name),
+        path.join(dir, 'src/modules/post/PostModel.js'),
       ),
     )
     .withArguments('Post Post')
@@ -42,23 +53,29 @@ it('generate a loader with schema', async () => {
 
   const destinationDir = getConfigDir('loader');
 
+  const modulePath = getModulePath(destinationDir, moduleName);
+  const loaderFilepath = path.join(modulePath, `${name}Loader.js`);
+
   assert.file([
-    `${destinationDir}/PostLoader.js`,
+    loaderFilepath,
   ]);
 
   const files = {
-    loader: getFileContent(`${folder}/${destinationDir}/PostLoader.js`),
+    loader: getFileContent(path.join(folder, loaderFilepath)),
   };
 
   expect(files).toMatchSnapshot();
 });
 
 it('generate a loader with schema and without timestamps', async () => {
+  const moduleName = 'user';
+  const name = uppercaseFirstLetter(moduleName);
+
   const folder = await helper.run(loaderGenerator)
     .inTmpDir(dir =>
       fs.copySync(
-        getFixturePath('User'),
-        path.join(dir, 'src/modules/user/User.js'),
+        getFixturePath(name),
+        path.join(dir, 'src/modules/user/UserModel.js'),
       ),
     )
     .withArguments('User User')
@@ -66,12 +83,15 @@ it('generate a loader with schema and without timestamps', async () => {
 
   const destinationDir = getConfigDir('loader');
 
+  const modulePath = getModulePath(destinationDir, moduleName);
+  const loaderFilepath = path.join(modulePath, `${name}Loader.js`);
+
   assert.file([
-    `${destinationDir}/UserLoader.js`,
+    loaderFilepath,
   ]);
 
   const files = {
-    loader: getFileContent(`${folder}/${destinationDir}/UserLoader.js`),
+    loader: getFileContent(path.join(folder, loaderFilepath)),
   };
 
   expect(files).toMatchSnapshot();
