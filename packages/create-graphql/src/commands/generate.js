@@ -48,7 +48,7 @@ function generate(name, options) {
   // Check if schema argument has been passed
   const schemaIndex = chosenOptions.indexOf('schema');
   chosenOptions.forEach(async (option) => {
-    const payload = [`graphql:${option}`, name];
+    const payload = [`@entria/graphql:${option}`, name];
 
     // If argument schema exists
     if (schemaIndex !== -1) {

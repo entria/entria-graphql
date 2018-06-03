@@ -22,17 +22,6 @@
     "shelljs": "^0.8.2",
     "yeoman-generator": "^2.0.5"
   },
-  "files": [
-    "generators/app",
-    "generators/type",
-    "generators/connection",
-    "generators/loader",
-    "generators/mutation",
-    "generators/test",
-    "generators/utils.js",
-    "generators/graphql-logo.js",
-    "generators/graphqlrc.json"
-  ],
   "homepage": "https://github.com/entria/create-graphql#readme",
   "keywords": [
     "apollo",
