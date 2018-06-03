@@ -67,12 +67,21 @@ export default mutationWithClientMutationId({
 ",
   "addTest": "import { graphql } from 'graphql';
 import { schema } from '../../schema';
-import { setupTest, getContext } from '../../../test/helper';
+import {
+  getContext,
+  connectMongoose,
+  clearDbAndRestartCounters,
+  disconnectMongoose,
+} from '../../../test/helper';
 
 import { User } from '.';
 import Example from './Example';
 
-beforeEach(async () => await setupTest());
+beforeAll(connectMongoose);
+
+beforeEach(clearDbAndRestartCounters);
+
+afterAll(disconnectMongoose);
 
 it('should not allow anonymous user', async () => {
   //language=GraphQL
@@ -199,12 +208,21 @@ export default mutationWithClientMutationId({
   "editTest": "import { graphql } from 'graphql';
 import { toGlobalId } from 'graphql-relay';
 import { schema } from '../../schema';
-import { setupTest, getContext } from '../../../test/helper';
+import {
+  getContext,
+  connectMongoose,
+  clearDbAndRestartCounters,
+  disconnectMongoose,
+} from '../../../test/helper';
 
 import User from './User';
 import Example from './Example';
 
-beforeEach(async () => await setupTest());
+beforeAll(connectMongoose);
+
+beforeEach(clearDbAndRestartCounters);
+
+afterAll(disconnectMongoose);
 
 it('should not allow anonymous user', async () => {
   //language=GraphQL
@@ -369,12 +387,21 @@ export default mutationWithClientMutationId({
 ",
   "addTest": "import { graphql } from 'graphql';
 import { schema } from '../../schema';
-import { setupTest, getContext } from '../../../test/helper';
+import {
+  getContext,
+  connectMongoose,
+  clearDbAndRestartCounters,
+  disconnectMongoose,
+} from '../../../test/helper';
 
 import User from './User';
 import Post from './Post';
 
-beforeEach(async () => await setupTest());
+beforeAll(connectMongoose);
+
+beforeEach(clearDbAndRestartCounters);
+
+afterAll(disconnectMongoose);
 
 it('should not allow anonymous user', async () => {
   //language=GraphQL
@@ -569,12 +596,21 @@ export default mutationWithClientMutationId({
   "editTest": "import { graphql } from 'graphql';
 import { toGlobalId } from 'graphql-relay';
 import { schema } from '../../schema';
-import { setupTest, getContext } from '../../../test/helper';
+import {
+  getContext,
+  connectMongoose,
+  clearDbAndRestartCounters,
+  disconnectMongoose,
+} from '../../../test/helper';
 
 import User from './User';
 import Post from './Post';
 
-beforeEach(async () => await setupTest());
+beforeAll(connectMongoose);
+
+beforeEach(clearDbAndRestartCounters);
+
+afterAll(disconnectMongoose);
 
 it('should not allow anonymous user', async () => {
   // TODO: specify fields to create a new Post
