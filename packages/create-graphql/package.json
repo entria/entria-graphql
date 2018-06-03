@@ -7,7 +7,7 @@
     "url": "https://github.com/entria"
   },
   "bin": {
-    "create-graphql": "./bin/create-graphql"
+    "entria-graphql": "./bin/entria-graphql"
   },
   "bugs": "https://github.com/entria/create-graphql/issues",
   "dependencies": {
