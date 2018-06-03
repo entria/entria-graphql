@@ -1,11 +1,20 @@
 import { graphql } from 'graphql';
 import { schema } from '../../schema';
-import { setupTest, getContext } from '../../../test/helper';
+import {
+  getContext,
+  connectMongoose,
+  clearDbAndRestartCounters,
+  disconnectMongoose,
+} from '../../../test/helper';
 
 import { User } from '<%= directories.model %>';
 import <%= name %> from '<%= directories.model %>/<%= name %>';
 
-beforeEach(async () => await setupTest());
+beforeAll(connectMongoose);
+
+beforeEach(clearDbAndRestartCounters);
+
+afterAll(disconnectMongoose);
 
 it('should not allow anonymous user', async () => {
   //language=GraphQL
