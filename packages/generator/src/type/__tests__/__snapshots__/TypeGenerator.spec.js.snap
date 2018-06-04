@@ -92,10 +92,10 @@ import type { GraphQLObjectTypeConfig } from 'graphql';
 import type { GraphQLContext } from '../../TypeDefinition';
 
 import { NodeInterface } from '../../../graphql/interface/NodeInterface';
-import UserType from '../user/UserType.js';
-import * as UserLoader from '../user/UserLoader.js';
-import CommentType from '../comment/CommentType.js';
-import * as CommentLoader from '../comment/CommentLoader.js';
+import UserType from '../user/UserType';
+import * as UserLoader from '../user/UserLoader';
+import CommentType from '../comment/CommentType';
+import * as CommentLoader from '../comment/CommentLoader';
 import Post from './PostLoader';
 
 export default new GraphQLObjectType(

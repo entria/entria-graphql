@@ -42,7 +42,7 @@ export const getDependenciesPath = (
         ...acc,
         [dep]: {
           path: entry,
-          relativePath,
+          relativePath: relativePath.replace('.js', ''),
           importName: getImportName(dep),
         },
       };
