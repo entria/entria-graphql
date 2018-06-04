@@ -1,115 +1,17 @@
 /* @flow */
 import recast from 'recast';
-import { uppercaseFirstLetter } from '../ejsHelpers';
+import type { GraphQLField } from './graphql';
+import { parseFieldToGraphQL } from './graphql';
 
 const { visit } = recast.types;
 
-type GraphQLField = {
-  name: string,
-  description: string,
-  required: boolean,
-  originalType: string, // type from mongoose
-  resolve: string, // resolver of this field
-  resolveArgs?: string,
-  type: string, // GraphQL Type
-  flowType: string, // Flow Type
-  graphqlType?: string, // graphql type name
-  graphqlLoader?: string, // graphql loader name
-}
-export const parseFieldToGraphQL = (field: FieldDefinition, ref: boolean): GraphQLField => {
-  const graphQLField = {
-    name: field.name,
-    description: field.description,
-    required: !!field.required,
-    originalType: field.type,
-    resolve: `obj.${field.name}`,
-  };
-
-  const name = uppercaseFirstLetter(field.name);
-  const typeFileName = `${name}Type`;
-  const loaderFileName = `${name}Loader`;
-
-  let parsedChildField;
-  let typeFileNameSingular;
-  let loaderFileNameSingular;
-
-  switch (field.type) {
-    case 'Number':
-      return {
-        ...graphQLField,
-        type: 'GraphQLInt',
-        flowType: 'number',
-      };
-    case 'Boolean':
-      return {
-        ...graphQLField,
-        type: 'GraphQLBoolean',
-        flowType: 'boolean',
-      };
-    case 'Array':
-      field.type = field.childType;
-
-      parsedChildField = parseFieldToGraphQL(field, ref);
-      parsedChildField.flowType = 'array';
-      parsedChildField.type = [parsedChildField.type];
-
-      if (field.childType === 'ObjectId' && ref) {
-        typeFileNameSingular = `${field.ref}Type`;
-        loaderFileNameSingular = `${field.ref}Loader`;
-
-        parsedChildField = {
-          ...parsedChildField,
-          type: [typeFileNameSingular],
-          resolve: `await ${loaderFileNameSingular}.load${name}ByIds(context, obj.${field.name})`,
-          resolveArgs: 'async (obj, args, context)',
-          graphqlType: typeFileNameSingular,
-          graphqlLoader: loaderFileNameSingular,
-        };
-      }
-
-      return parsedChildField;
-    case 'ObjectId':
-      if (ref) {
-        return {
-          ...graphQLField,
-          type: typeFileName,
-          flowType: 'string',
-          resolve: `await ${loaderFileName}.load(context, obj.${field.name})`,
-          resolveArgs: 'async (obj, args, context)',
-          graphqlType: typeFileName,
-          graphqlLoader: loaderFileName,
-        };
-      }
-
-      return {
-        ...graphQLField,
-        type: 'GraphQLID',
-        flowType: 'string',
-      };
-    case 'Date':
-      return {
-        ...graphQLField,
-        type: 'GraphQLString',
-        flowType: 'string',
-        resolve: `obj.${field.name} ? obj.${field.name}.toISOString() : null`,
-      };
-    default:
-      return {
-        ...graphQLField,
-        type: 'GraphQLString',
-        flowType: 'string',
-      };
-  }
-};
-
 type MongooseFields = {
-  [key: string]: FieldDefinition,
+  [key: string]: MongooseFieldDefinition,
 };
 export const parseGraphQLSchema = (mongooseFields: MongooseFields, ref: boolean) => {
-  // TODO - improve how we track dependencies
-  const dependencies = [];
-  const typeDependencies = [];
-  const loaderDependencies = [];
+  const dependencies = new Set();
+  const typeDependencies = new Set();
+  const loaderDependencies = new Set();
 
   const fields: GraphQLField[] = Object.keys(mongooseFields).map((name: string) => {
     const field = parseFieldToGraphQL(mongooseFields[name], ref);
@@ -119,34 +21,21 @@ export const parseGraphQLSchema = (mongooseFields: MongooseFields, ref: boolean)
     if (Array.isArray(field.type)) {
       // array of scalar types
       if (!field.graphqlType) {
-        if (dependencies.indexOf(field.type[0]) === -1) {
-          dependencies.push(field.type[0]);
-        }
+        dependencies.add(field.type[0]);
       } else {
-        if (typeDependencies.indexOf(field.graphqlType) === -1) {
-          typeDependencies.push(field.graphqlType);
-        }
-
-        if (loaderDependencies.indexOf(field.graphqlLoader) === -1) {
-          loaderDependencies.push(field.graphqlLoader);
-        }
+        typeDependencies.add(field.graphqlType);
+        loaderDependencies.add(field.graphqlLoader);
       }
 
       field.type = `GraphQLList(${field.type[0]})`;
 
-      if (dependencies.indexOf('GraphQLList') === -1) {
-        dependencies.push('GraphQLList');
-      }
+      dependencies.add('GraphQLList');
     } else if (field.graphqlType) {
-      if (typeDependencies.indexOf(field.graphqlType) === -1) {
-        typeDependencies.push(field.graphqlType);
-      }
+      typeDependencies.add(field.graphqlType);
+      loaderDependencies.add(field.graphqlLoader);
 
-      if (loaderDependencies.indexOf(field.graphqlLoader) === -1) {
-        loaderDependencies.push(field.graphqlLoader);
-      }
-    } else if (dependencies.indexOf(field.type) === -1) {
-      dependencies.push(field.type);
+    } else {
+      dependencies.add(field.type);
     }
 
     return field;
@@ -154,9 +43,9 @@ export const parseGraphQLSchema = (mongooseFields: MongooseFields, ref: boolean)
 
   return {
     fields,
-    dependencies,
-    typeDependencies,
-    loaderDependencies,
+    dependencies: [...dependencies],
+    typeDependencies: [...typeDependencies],
+    loaderDependencies: [...loaderDependencies],
   };
 };
 
@@ -209,7 +98,7 @@ const FIELD_TYPE = {
 
 type FieldType = $Values<typeof FIELD_TYPE>;
 
-type FieldDefinition = {
+export type MongooseFieldDefinition = {
   name: string,
   type: FieldType,
   childType?: string,
@@ -230,7 +119,7 @@ type ArgumentProperty = {
   },
   value: ArgumentValue,
 };
-const getFieldDefinition = (field: ArgumentProperty, parent = null): FieldDefinition => {
+const getFieldDefinition = (field: ArgumentProperty, parent = null): MongooseFieldDefinition => {
   const value = field.value || field;
   let fieldDefinition = {};
 
