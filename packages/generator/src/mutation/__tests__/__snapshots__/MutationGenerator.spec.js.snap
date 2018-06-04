@@ -74,8 +74,10 @@ import {
   disconnectMongoose,
 } from '../../../test/helper';
 
-import { User } from '.';
-import Example from './Example';
+import {
+  User,
+  Example,
+} from '../../../../models';
 
 beforeAll(connectMongoose);
 
@@ -213,8 +215,10 @@ import {
   disconnectMongoose,
 } from '../../../test/helper';
 
-import User from './User';
-import Example from './Example';
+import {
+  User,
+  Example,
+} from '../../../../models';
 
 beforeAll(connectMongoose);
 
@@ -392,8 +396,10 @@ import {
   disconnectMongoose,
 } from '../../../test/helper';
 
-import User from './User';
-import Post from './Post';
+import {
+  User,
+  Post,
+} from '../../../../models';
 
 beforeAll(connectMongoose);
 
@@ -599,8 +605,10 @@ import {
   disconnectMongoose,
 } from '../../../test/helper';
 
-import User from './User';
-import Post from './Post';
+import {
+  User,
+  Post,
+} from '../../../../models';
 
 beforeAll(connectMongoose);
 
