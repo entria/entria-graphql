@@ -79,12 +79,12 @@ type PostType = {
   title: string,
   user: string,
   slug: string,
-  tags: array,
-  oldSlugs: array,
-  comments: array,
-  externalComments: array,
-  createdAt: string,
-  updatedAt: string,
+  tags: string[],
+  oldSlugs: string[],
+  comments: string[],
+  externalComments: string[],
+  createdAt: Date,
+  updatedAt: Date,
 }
 
 export default class Post {
@@ -93,12 +93,12 @@ export default class Post {
   title: string;
   user: string;
   slug: string;
-  tags: array;
-  oldSlugs: array;
-  comments: array;
-  externalComments: array;
-  createdAt: string;
-  updatedAt: string;
+  tags: string[];
+  oldSlugs: string[];
+  comments: string[];
+  externalComments: string[];
+  createdAt: Date;
+  updatedAt: Date;
 
   constructor(data: PostType) {
     this.id = data.id;
@@ -168,7 +168,7 @@ type UserType = {
   password: string,
   email: string,
   active: boolean,
-  lastLoginAt: string,
+  lastLoginAt: Date,
 }
 
 export default class User {
@@ -178,7 +178,7 @@ export default class User {
   password: string;
   email: string;
   active: boolean;
-  lastLoginAt: string;
+  lastLoginAt: Date;
 
   constructor(data: UserType) {
     this.id = data.id;
