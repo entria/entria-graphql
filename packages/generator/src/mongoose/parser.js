@@ -1,10 +1,22 @@
 /* @flow */
 import recast from 'recast';
-import { uppercaseFirstLetter } from './ejsHelpers';
+import { uppercaseFirstLetter } from '../ejsHelpers';
 
 const { visit } = recast.types;
 
-export const parseFieldToGraphQL = (field, ref) => {
+type GraphQLField = {
+  name: string,
+  description: string,
+  required: boolean,
+  originalType: string, // type from mongoose
+  resolve: string, // resolver of this field
+  resolveArgs?: string,
+  type: string, // GraphQL Type
+  flowType: string, // Flow Type
+  graphqlType?: string, // graphql type name
+  graphqlLoader?: string, // graphql loader name
+}
+export const parseFieldToGraphQL = (field: FieldDefinition, ref: boolean): GraphQLField => {
   const graphQLField = {
     name: field.name,
     description: field.description,
@@ -79,7 +91,7 @@ export const parseFieldToGraphQL = (field, ref) => {
         ...graphQLField,
         type: 'GraphQLString',
         flowType: 'string',
-        resolve: `obj.${field.name}.toISOString()`,
+        resolve: `obj.${field.name} ? obj.${field.name}.toISOString() : null`,
       };
     default:
       return {
@@ -90,13 +102,16 @@ export const parseFieldToGraphQL = (field, ref) => {
   }
 };
 
-export const parseGraphQLSchema = (mongooseFields, ref) => {
+type MongooseFields = {
+  [key: string]: FieldDefinition,
+};
+export const parseGraphQLSchema = (mongooseFields: MongooseFields, ref: boolean) => {
+  // TODO - improve how we track dependencies
   const dependencies = [];
   const typeDependencies = [];
   const loaderDependencies = [];
 
-  // $FlowFixMe
-  const fields = Object.keys(mongooseFields).map((name) => {
+  const fields: GraphQLField[] = Object.keys(mongooseFields).map((name: string) => {
     const field = parseFieldToGraphQL(mongooseFields[name], ref);
 
     // we have a special case for array types, since we need to add as dependency
@@ -117,7 +132,7 @@ export const parseGraphQLSchema = (mongooseFields, ref) => {
         }
       }
 
-      field.type = `new GraphQLList(${field.type[0]})`;
+      field.type = `GraphQLList(${field.type[0]})`;
 
       if (dependencies.indexOf('GraphQLList') === -1) {
         dependencies.push('GraphQLList');
@@ -151,9 +166,10 @@ export const parseGraphQLSchema = (mongooseFields, ref) => {
  * @param nodes {Array} The _options_ argument of `new mongoose.Schema()`
  * @returns {Array} The parsed value of timestamps with the provided field name
  */
-const getSchemaTimestampsFromAst = (nodes) => {
-  const timestampFields = [];
+const getSchemaTimestampsFromAst = (nodes: ArgumentProperty[]) => {
+  const timestampFields = {};
 
+  // TODO - use filter and reduce
   nodes.forEach((node) => {
     if (node.key.name === 'timestamps') {
       node.value.properties.forEach((timestampProperty) => {
@@ -175,7 +191,7 @@ const getSchemaTimestampsFromAst = (nodes) => {
  * @param properties {Array}
  * @returns {Object} The ObjectProperty if found, undefined otherwise.
  */
-const getArrayTypeElementFromPropertiesArray = properties => properties.find(
+const getArrayTypeElementFromPropertiesArray = (properties: ArgumentProperty[]) => properties.find(
   ({ key, value: item }) => key.name === 'type' && item.type === 'ArrayExpression',
 );
 
@@ -183,7 +199,38 @@ const getArrayTypeElementFromPropertiesArray = properties => properties.find(
 // Identifier: { field1: ObjectId }
 const validSingleValueTypes = ['MemberExpression', 'Identifier'];
 
-const getFieldDefinition = (field, parent = null) => {
+const FIELD_TYPE = {
+  Number: 'Number',
+  Boolean: 'Boolean',
+  Array: 'Array',
+  ObjectId: 'ObjectId',
+  Date: 'Date',
+};
+
+type FieldType = $Values<typeof FIELD_TYPE>;
+
+type FieldDefinition = {
+  name: string,
+  type: FieldType,
+  childType?: string,
+  [key: string]: string,
+
+  description?: string,
+  required?: boolean,
+};
+
+type ArgumentValue = {
+  type: string,
+  properties: ArgumentProperty[],
+  value: string,
+}
+type ArgumentProperty = {
+  key: {
+    name: string,
+  },
+  value: ArgumentValue,
+};
+const getFieldDefinition = (field: ArgumentProperty, parent = null): FieldDefinition => {
   const value = field.value || field;
   let fieldDefinition = {};
 
@@ -219,24 +266,46 @@ const getFieldDefinition = (field, parent = null) => {
     // override type, specify Array
     fieldDefinition.childType = fieldDefinition.type;
     fieldDefinition.type = 'Array';
-  } else if (validSingleValueTypes.indexOf(value.type) !== -1) {
-    fieldDefinition.type = value.property ? value.property.name : value.name;
-  } else {
-    value.properties.forEach(({ key, value: item }) => {
-      fieldDefinition[key.name] = item.name || item.value;
-    });
+
+    return fieldDefinition;
   }
+
+  if (validSingleValueTypes.indexOf(value.type) !== -1) {
+    fieldDefinition.type = value.property ? value.property.name : value.name;
+
+    return fieldDefinition;
+  }
+
+  value.properties.forEach(({ key, value: item }) => {
+    fieldDefinition[key.name] = item.name || item.value;
+  });
 
   return fieldDefinition;
 };
 
-const getSchemaFieldsFromAst = (node, withTimestamps) => {
+type Argument = {
+  properties: ArgumentProperty[],
+};
+type Callee = {
+  object: {
+    name: string,
+  },
+  property: {
+    name: string,
+  },
+};
+type Node = {
+  type: string,
+  callee: Callee,
+  arguments: Argument[],
+}
+const getSchemaFieldsFromAst = (node: Node, withTimestamps: boolean) => {
   const astSchemaFields = node.arguments[0].properties;
 
-  const fields = [];
+  const fields = {};
 
   astSchemaFields.forEach((field) => {
-    const name = field.key.name;
+    const { name } = field.key;
 
     const fieldDefinition = getFieldDefinition(field);
 
@@ -258,7 +327,7 @@ const getSchemaFieldsFromAst = (node, withTimestamps) => {
   return fields;
 };
 
-export const getSchemaDefinition = (modelCode, withTimestamps, ref) => {
+export const getSchemaDefinition = (modelCode: string, withTimestamps: boolean, ref: boolean) => {
   const ast = recast.parse(modelCode, {
     parser: {
       parse: source => require('babylon').parse(source, { // eslint-disable-line global-require

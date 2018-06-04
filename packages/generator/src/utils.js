@@ -2,7 +2,7 @@
 import path from 'path';
 import fs from 'fs';
 import { getCreateGraphQLConfig } from './config';
-import { getSchemaDefinition } from './parser';
+import { getSchemaDefinition } from './mongoose/parser';
 
 /**
  * Get the relative path directory between two directories specified on the config file
