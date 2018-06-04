@@ -50,6 +50,11 @@
     "build": "npm run clear && babel -d ./generators ./src --copy-files --ignore *.spec.js",
     "clear": "rimraf ./generators",
     "test": "jest",
+    "prepare": "npm run build",
+    "prepublish": "check-node-version --npm \">=4\" || npm run build",
     "watch": "babel -w -d ./generators ./src --copy-files"
+  },
+  "devDependencies": {
+    "check-node-version": "^3.2.0"
   }
 }
