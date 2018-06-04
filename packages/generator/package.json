@@ -47,12 +47,12 @@
     "url": "https://github.com/entria/create-graphql"
   },
   "scripts": {
-    "build": "npm run clear && babel -d ./generators ./src --copy-files --ignore *.spec.js",
+    "build": "npm run clear && babel src --ignore *.spec.js --out-dir ./generators --copy-files",
     "clear": "rimraf ./generators",
     "test": "jest",
     "prepare": "npm run build",
     "prepublish": "check-node-version --npm \">=4\" || npm run build",
-    "watch": "babel -w -d ./generators ./src --copy-files"
+    "watch": "babel -w -d ./generators ./src"
   },
   "devDependencies": {
     "check-node-version": "^3.2.0"

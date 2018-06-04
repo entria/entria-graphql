@@ -43,7 +43,7 @@
     "url": "http://github.com/entria/create-graphql"
   },
   "scripts": {
-    "build": "npm run clear && babel src --ignore *.spec.js --out-dir dist",
+    "build": "npm run clear && babel src --ignore *.spec.js --out-dir dist --copy-files",
     "clear": "rimraf ./dist",
     "lint": "./node_modules/.bin/eslint -c .eslintrc ./src",
     "prepare": "npm run build",
