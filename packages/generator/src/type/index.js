@@ -1,12 +1,11 @@
 // @flow
 import Generator from 'yeoman-generator';
 import path from 'path';
-import relative from 'relative';
 import {
   getMongooseModelSchema,
   getRelativeConfigDir,
 } from '../utils';
-import { getConfigDir } from '../config';
+import { getConfigDir, DIRECTORY_TYPE } from '../config';
 import { uppercaseFirstLetter } from '../ejsHelpers';
 import { getModulePath, getTestPath } from '../paths';
 import { getDependencies, getDependenciesPath } from '../parser/mongoose';
@@ -55,8 +54,10 @@ class TypeGenerator extends Generator {
 
     const deps = schema ? getDependencies(schema.fields) : null;
 
+    const src = getConfigDir(DIRECTORY_TYPE.SRC);
+
     const depsMap = deps ? getDependenciesPath(
-      this.destinationPath(),
+      this.destinationPath(src),
       [...deps.typeDependencies, ...deps.loaderDependencies],
       relativePath,
     ) : null;

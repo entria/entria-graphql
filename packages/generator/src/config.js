@@ -17,16 +17,17 @@ const parseConfigFile = (filePath: string) => {
   const config = JSON.parse(fs.readFileSync(filePath, 'utf8'));
 
   const directories = Object.keys(config.directories).reduce((data, directory) => {
-    if (directory === 'source') {
+    if (directory === DIRECTORY_TYPE.SOURCE) {
       return {
         ...data,
         [directory]: `${rootPath}/${config.directories[directory]}`,
+        [DIRECTORY_TYPE.SRC]: config.directories.source,
       };
     }
 
     return {
       ...data,
-      [directory]: `${config.directories.source}/${config.directories[directory]}`,
+      [directory]: `${config.directories.source}/${config.directories.module}/${config.directories[directory]}`,
     };
   }, {});
 
@@ -39,17 +40,23 @@ const parseConfigFile = (filePath: string) => {
   };
 };
 
-type DirectoryType =
-  | 'source'
-  | 'connection'
-  | 'loader'
-  | 'model'
-  | 'mutation'
-  | 'mutation_test'
-  | 'type'
-  | 'type_test';
+export const DIRECTORY_TYPE = {
+  SOURCE: 'source',
+  SRC: 'src',
+  MODULE: 'module',
+  CONNECTION: 'connection',
+  LOADER: 'loader',
+  MODEL: 'model',
+  MUTATION: 'mutation',
+  MUTATION_TEST: 'mutation_test',
+  TYPE: 'type',
+  TYPE_TEST: 'type_test',
+};
+
+type DirectoryType = $Values<typeof DIRECTORY_TYPE>;
 type Directories = {
   source: string,
+  module: string,
   connection: string,
   loader: string,
   model: string,

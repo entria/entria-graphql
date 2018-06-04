@@ -48,7 +48,6 @@
     "lint": "./node_modules/.bin/eslint -c .eslintrc ./src",
     "prepare": "npm run build",
     "prepublish": "check-node-version --npm \">=4\" || npm run build",
-    "postinstall": "npm i -g @entria/generator-graphql",
     "watch": "babel -w -d ./dist ./src"
   },
   "devDependencies": {
