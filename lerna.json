@@ -1,6 +1,6 @@
 {
   "lerna": "2.0.0-beta.30",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "changelog": {
     "repo": "entria/create-graphql",
     "labels": {
