@@ -6,7 +6,7 @@ import {
   connectMongoose,
   clearDbAndRestartCounters,
   disconnectMongoose,
-} from '../../../test/helper';
+} from '../../../../../test/helper';
 
 import {
   User,
