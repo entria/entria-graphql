@@ -15,7 +15,7 @@ import {
 import <%= name %>Model from '../<%= name %>Model';
 
 import <%= name %>Type from '../<%= name %>Type';
-import <%= name %>Loader from '../<%= name %>Loader';
+import <%= name %>, * as <%= name %>Loader from '../<%= name %>Loader';
 
 export default mutationWithClientMutationId({
   name: '<%= name %>Edit',

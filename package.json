@@ -16,6 +16,7 @@
     "babel-preset-env": "^1.7.0",
     "babel-preset-flow": "^6.23.0",
     "chokidar": "^2.0.3",
+    "ejs-lint": "^0.3.0",
     "eslint": "^4.19.0",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-plugin-flowtype": "^2.49.3",
@@ -34,7 +35,7 @@
     "yeoman-test": "^1.7.2"
   },
   "lint-staged": {
-    "*.js": [
+    "packages/*/src/**/*.js": [
       "yarn prettier",
       "eslint --fix",
       "git add"

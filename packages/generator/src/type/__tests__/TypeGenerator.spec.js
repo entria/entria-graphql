@@ -1,11 +1,10 @@
 import helper from 'yeoman-test';
 import assert from 'yeoman-assert';
 import path from 'path';
-import fs from 'fs-extra';
 
 import {
   getFileContent,
-  getFixturePath,
+  copyFixturesToModules,
 } from '../../../test/helpers';
 
 import { getConfigDir } from '../../config';
@@ -48,12 +47,7 @@ it('generate a type with schema', async () => {
   const name = uppercaseFirstLetter(moduleName);
 
   const folder = await helper.run(typeGenerator)
-    .inTmpDir(dir =>
-      fs.copySync(
-        getFixturePath(name),
-        path.join(dir, 'src/modules/post/PostModel.js'),
-      ),
-    )
+    .inTmpDir(dir => copyFixturesToModules(dir, moduleName))
     .withArguments('Post Post')
     .toPromise();
 
@@ -83,12 +77,7 @@ it('generate a type with schema and without timestamps', async () => {
   const name = uppercaseFirstLetter(moduleName);
 
   const folder = await helper.run(typeGenerator)
-    .inTmpDir(dir =>
-      fs.copySync(
-        getFixturePath('User'),
-        path.join(dir, 'src/modules/user/UserModel.js'),
-      ),
-    )
+    .inTmpDir(dir => copyFixturesToModules(dir, moduleName))
     .withArguments('User User')
     .toPromise();
 

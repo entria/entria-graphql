@@ -1,11 +1,10 @@
 import helper from 'yeoman-test';
 import assert from 'yeoman-assert';
 import path from 'path';
-import fs from 'fs-extra';
 
 import {
+  copyFixturesToModules,
   getFileContent,
-  getFixturePath,
 } from '../../../test/helpers';
 
 import { getConfigDir } from '../../config';
@@ -43,12 +42,7 @@ it('generate a connection with schema', async () => {
   const name = uppercaseFirstLetter(moduleName);
 
   const folder = await helper.run(connectionGenerator)
-    .inTmpDir(dir =>
-      fs.copySync(
-        getFixturePath(name),
-        path.join(dir, 'src/modules/post/Post.js'),
-      ),
-    )
+    .inTmpDir(dir => copyFixturesToModules(dir, moduleName))
     .withArguments('Post Post')
     .toPromise();
 

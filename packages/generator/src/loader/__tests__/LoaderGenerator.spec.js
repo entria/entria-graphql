@@ -1,11 +1,10 @@
 import helper from 'yeoman-test';
 import assert from 'yeoman-assert';
 import path from 'path';
-import fs from 'fs-extra';
 
 import {
+  copyFixturesToModules,
   getFileContent,
-  getFixturePath,
 } from '../../../test/helpers';
 import { getConfigDir } from '../../config';
 import { uppercaseFirstLetter } from '../../ejsHelpers';
@@ -42,12 +41,7 @@ it('generate a loader with schema', async () => {
   const name = uppercaseFirstLetter(moduleName);
 
   const folder = await helper.run(loaderGenerator)
-    .inTmpDir(dir =>
-      fs.copySync(
-        getFixturePath(name),
-        path.join(dir, 'src/modules/post/PostModel.js'),
-      ),
-    )
+    .inTmpDir(dir => copyFixturesToModules(dir, moduleName))
     .withArguments('Post Post')
     .toPromise();
 
@@ -72,12 +66,7 @@ it('generate a loader with schema and without timestamps', async () => {
   const name = uppercaseFirstLetter(moduleName);
 
   const folder = await helper.run(loaderGenerator)
-    .inTmpDir(dir =>
-      fs.copySync(
-        getFixturePath(name),
-        path.join(dir, 'src/modules/user/UserModel.js'),
-      ),
-    )
+    .inTmpDir(dir => copyFixturesToModules(dir, moduleName))
     .withArguments('User User')
     .toPromise();
 

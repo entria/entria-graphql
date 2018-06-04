@@ -2,7 +2,8 @@
 
 exports[`generate a type 1`] = `
 Object {
-  "type": "import {
+  "type": "// @flow
+import {
   GraphQLObjectType,
   GraphQLString,
 } from 'graphql';
@@ -81,7 +82,6 @@ it('should retrieve a record', async () => {
 exports[`generate a type with schema 1`] = `
 Object {
   "type": "// @flow
-
 import {
   GraphQLObjectType,
   GraphQLString,
@@ -92,10 +92,10 @@ import type { GraphQLObjectTypeConfig } from 'graphql';
 import type { GraphQLContext } from '../../TypeDefinition';
 
 import { NodeInterface } from '../../../graphql/interface/NodeInterface';
-import UserType from './UserType';
-import CommentType from './CommentType';
-import UserLoader from './UserLoader';
-import CommentLoader from './CommentLoader';
+import UserType from '../user/UserType';
+import * as UserLoader from '../user/UserLoader';
+import CommentType from '../comment/CommentType';
+import * as CommentLoader from '../comment/CommentLoader';
 import Post from './PostLoader';
 
 export default new GraphQLObjectType(
@@ -206,7 +206,6 @@ it('should retrieve a record', async () => {
 exports[`generate a type with schema and without timestamps 1`] = `
 Object {
   "type": "// @flow
-
 import {
   GraphQLObjectType,
   GraphQLString,
