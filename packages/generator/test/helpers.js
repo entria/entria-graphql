@@ -18,6 +18,7 @@ export const getFileContent = (pathname: string) => fs.readFileSync(pathname, 'u
 export const getFixturePath = (name: string) => path.join(__dirname, `../fixtures/${name}.js`);
 
 const FIXTURES_MODULES = [
+  'adminUser',
   'comment',
   'post',
   'user',

@@ -33,7 +33,7 @@ export const getDependenciesPath = (
   const entries = fastGlob.sync([`${src}/**/*.js`]);
 
   const depFileMap = dependencies.reduce((acc, dep) => {
-    const entry = entries.find((e) => e.indexOf(dep) > -1);
+    const entry = entries.find((e) => e.indexOf(`/${dep}.js`) > -1);
 
     if (entry) {
       const relativePath = relative(destination, entry);
