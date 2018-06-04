@@ -7,6 +7,7 @@ import pkg from '../package.json';
 import {
   init,
   generate,
+  frontend,
 } from './commands';
 import { verifyYeoman } from './utils';
 
@@ -36,6 +37,20 @@ program
     await verifyYeoman();
 
     generate(name, options);
+  });
+
+program
+  .command('frontend <name>')
+  .alias('f')
+  .option('-a, --add', 'Generate a new Add Form screen')
+  .option('-e, --edit', 'Generate a new Edit Form screen')
+  .option('-l, --list', 'Generate a new List screen')
+  .option('-v, --view', 'Generate a new View for an ObjectType')
+  .description('Generate a new frontend file (Add, Edit, List, View)')
+  .action(async (name, options) => {
+    await verifyYeoman();
+
+    frontend(name, options);
   });
 
 program.parse(process.argv);
