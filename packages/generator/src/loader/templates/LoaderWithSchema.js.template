@@ -2,6 +2,7 @@
 import DataLoader from 'dataloader';
 import <%= name %>Model from './<%= name %>Model';
 import { connectionFromMongoCursor, mongooseLoader } from '@entria/graphql-mongoose-loader';
+import type { ConnectionArguments } from 'graphql-relay';
 import type { GraphQLContext } from '../../TypeDefinition';
 
 type <%= name %>Type = {
@@ -32,7 +33,7 @@ export const getLoader = () => new DataLoader(ids => mongooseLoader(<%= name %>M
 
 const viewerCanSee = () => true;
 
-export const load = async ({ user: viewer, dataloaders }: GraphQLContext, id: string) => {
+export const load = async ({ dataloaders }: GraphQLContext, id: ?string) => {
   if (!id) return null;
 
   try {

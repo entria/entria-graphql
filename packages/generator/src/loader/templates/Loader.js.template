@@ -27,7 +27,7 @@ export const getLoader = () => new DataLoader(ids => mongooseLoader(<%= name %>M
 
 const viewerCanSee = () => true;
 
-export const load = async ({ user: viewer, dataloaders }: GraphQLContext, id: string) => {
+export const load = async ({ dataloaders }: GraphQLContext, id: ?string) => {
   if (!id) return null;
 
   try {

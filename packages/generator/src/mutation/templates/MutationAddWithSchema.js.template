@@ -12,7 +12,7 @@ import {
 
 import <%= name %>Model from '../<%= name %>Model';
 
-import <%= name %>, * as <%= name %>Loader from '../<%= name %>Loader';
+import * as <%= name %>Loader from '../<%= name %>Loader';
 import <%= name %>Connection from '../<%= name %>Connection';
 
 export default mutationWithClientMutationId({
@@ -24,9 +24,9 @@ export default mutationWithClientMutationId({
     },
     <%_ } -%>
   },
-  mutateAndGetPayload: async (args, { user }) => {
+  mutateAndGetPayload: async (args, context) => {
     // Verify if user is authorized
-    if (!user) {
+    if (!context.user) {
       throw new Error('Unauthorized user');
     }
 
@@ -65,7 +65,7 @@ export default mutationWithClientMutationId({
         }
 
         return {
-          cursor: toGlobalId('<%= name %>', <%= camelCaseName %>),
+          cursor: toGlobalId('<%= name %>', <%= camelCaseName %>._id),
           node: <%= camelCaseName %>,
         };
       },

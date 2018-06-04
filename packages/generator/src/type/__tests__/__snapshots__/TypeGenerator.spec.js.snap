@@ -31,7 +31,7 @@ export default new GraphQLObjectType(
 );
 ",
   "typeTest": "import { graphql } from 'graphql';
-import { schema } from '../../schema';
+import { schema } from '../../../graphql/schema';
 import {
   getContext,
   connectMongoose,
@@ -155,7 +155,7 @@ export default new GraphQLObjectType(
 );
 ",
   "typeTest": "import { graphql } from 'graphql';
-import { schema } from '../../schema';
+import { schema } from '../../../graphql/schema';
 import {
   getContext,
   connectMongoose,
@@ -255,7 +255,7 @@ export default new GraphQLObjectType(
 );
 ",
   "typeTest": "import { graphql } from 'graphql';
-import { schema } from '../../schema';
+import { schema } from '../../../graphql/schema';
 import {
   getContext,
   connectMongoose,

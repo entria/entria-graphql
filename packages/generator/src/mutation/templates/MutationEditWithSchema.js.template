@@ -15,7 +15,7 @@ import {
 import <%= name %>Model from '../<%= name %>Model';
 
 import <%= name %>Type from '../<%= name %>Type';
-import <%= name %>, * as <%= name %>Loader from '../<%= name %>Loader';
+import * as <%= name %>Loader from '../<%= name %>Loader';
 
 export default mutationWithClientMutationId({
   name: '<%= name %>Edit',
@@ -30,10 +30,8 @@ export default mutationWithClientMutationId({
     <%_ } -%>
   },
   mutateAndGetPayload: async (args, context) => {
-    const { user } = context;
-
     // Verify if user is authorized
-    if (!user) {
+    if (!context.user) {
       throw new Error('Unauthorized user');
     }
 
