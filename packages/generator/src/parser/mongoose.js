@@ -1,9 +1,58 @@
 /* @flow */
 import recast from 'recast';
+import fastGlob from 'fast-glob';
+import relative from 'relative';
+
 import type { GraphQLField } from './graphql';
 import { parseFieldToGraphQL } from './graphql';
 
 const { visit } = recast.types;
+
+export const getImportName = (dependency: string) => {
+  if (dependency.indexOf('Loader') > -1) {
+    return `* as ${dependency}`;
+  }
+
+  return dependency;
+};
+
+type Dependency = {
+  path: string,
+  relativePath: string,
+  importName: string,
+};
+type DependencyMap = {
+  [key: string]: Dependency,
+}
+export const getDependenciesPath = (
+  src: string,
+  dependencies: string[],
+  destination: string,
+): DependencyMap => {
+  // TODO - cache this
+  const entries = fastGlob.sync([`${src}/**/*.js`]);
+
+  const depFileMap = dependencies.reduce((acc, dep) => {
+    const entry = entries.find((e) => e.indexOf(dep) > -1);
+
+    if (entry) {
+      const relativePath = relative(destination, entry);
+
+      return {
+        ...acc,
+        [dep]: {
+          path: entry,
+          relativePath,
+          importName: getImportName(dep),
+        },
+      };
+    }
+
+    return acc;
+  }, {});
+
+  return depFileMap;
+};
 
 export const getDependencies = (fields: GraphQLField[]) => {
   const dependencies = new Set();

@@ -10,7 +10,7 @@ import {
 
 import <%= name %>Model from '../<%= name %>Model';
 
-import <%= name %>Loader from '../<%= name %>Loader';
+import <%= name %>, * as <%= name %>Loader from '../<%= name %>Loader';
 import <%= name %>Connection from '../<%= name %>Connection';
 
 export default mutationWithClientMutationId({

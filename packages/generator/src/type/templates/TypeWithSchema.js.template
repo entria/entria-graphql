@@ -1,9 +1,8 @@
 // @flow
-
 import {
   GraphQLObjectType,
-  <%_ for (i in deps.dependencies) { -%>
-  <%= deps.dependencies[i] %>,
+  <%_ for (i in dependencies) { -%>
+  <%= dependencies[i] %>,
   <%_ } -%>
 } from 'graphql';
 import { globalIdField } from 'graphql-relay';
@@ -11,12 +10,9 @@ import type { GraphQLObjectTypeConfig } from 'graphql';
 import type { GraphQLContext } from '../../TypeDefinition';
 
 import { NodeInterface } from '<%= directories.interface %>/NodeInterface';
-<%_ for (i in deps.typeDependencies) { -%>
-import <%= deps.typeDependencies[i] %> from '<%= directories.type %>/<%=deps.typeDependencies[i]%>';
-<%_ } -%>
-<%_ for (i in deps.loaderDependencies) { -%>
-import <%= deps.loaderDependencies[i] %> from '<%= directories.loader %>/<%=deps.loaderDependencies[i]%>';
-<%_ } -%>
+<% Object.keys(depsMap).sort((a, b) => b.localeCompare(a)).forEach(function (depKey) { -%>
+import <%= depsMap[depKey].importName %> from '<%= depsMap[depKey].relativePath %>';
+<%  }); -%>
 import <%= name %> from './<%= name %>Loader';
 
 export default new GraphQLObjectType(

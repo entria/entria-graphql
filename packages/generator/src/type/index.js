@@ -1,6 +1,7 @@
 // @flow
 import Generator from 'yeoman-generator';
 import path from 'path';
+import relative from 'relative';
 import {
   getMongooseModelSchema,
   getRelativeConfigDir,
@@ -8,7 +9,7 @@ import {
 import { getConfigDir } from '../config';
 import { uppercaseFirstLetter } from '../ejsHelpers';
 import { getModulePath, getTestPath } from '../paths';
-import { getDependencies } from '../parser/mongoose';
+import { getDependencies, getDependenciesPath } from '../parser/mongoose';
 
 class TypeGenerator extends Generator {
   constructor(args, options) {
@@ -48,23 +49,30 @@ class TypeGenerator extends Generator {
     const moduleName = this.options.name.toLowerCase();
     const modulePath = getModulePath(this.destinationDir, moduleName);
 
-    const destinationPath = this.destinationPath(
-      path.join(modulePath, `${typeFileName}.js`),
-    );
+    const relativePath = path.join(modulePath, `${typeFileName}.js`);
+
+    const destinationPath = this.destinationPath(relativePath);
 
     const deps = schema ? getDependencies(schema.fields) : null;
+
+    const depsMap = deps ? getDependenciesPath(
+      this.destinationPath(),
+      [...deps.typeDependencies, ...deps.loaderDependencies],
+      relativePath,
+    ) : null;
 
     const templateVars = {
       name,
       schema,
-      deps,
+      dependencies: deps ? deps.dependencies : null,
+      depsMap,
       directories,
     };
 
     this._generateTypeTest({
       name,
       schema,
-      deps
+      depsMap,
     });
 
     this.fs.copyTpl(templatePath, destinationPath, templateVars);
@@ -74,7 +82,7 @@ class TypeGenerator extends Generator {
     return getRelativeConfigDir('type', ['model', 'type', 'loader', 'connection', 'interface']);
   }
 
-  _generateTypeTest({ name, schema, deps }) {
+  _generateTypeTest({ name, schema, depsMap }) {
     const templatePath = this.templatePath('test/Type.js.template');
 
     const moduleName = this.options.name.toLowerCase();
@@ -91,7 +99,7 @@ class TypeGenerator extends Generator {
     const templateVars = {
       name,
       schema,
-      deps,
+      depsMap,
       directories,
     };
 

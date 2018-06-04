@@ -14,7 +14,7 @@ import {
 
 import ExampleModel from '../ExampleModel';
 
-import ExampleLoader from '../ExampleLoader';
+import Example, * as ExampleLoader from '../ExampleLoader';
 import ExampleConnection from '../ExampleConnection';
 
 export default mutationWithClientMutationId({
@@ -148,7 +148,7 @@ import {
 import ExampleModel from '../ExampleModel';
 
 import ExampleType from '../ExampleType';
-import ExampleLoader from './ExampleLoader';
+import Example, * as ExampleLoader from '../ExampleLoader';
 
 export default mutationWithClientMutationId({
   name: 'ExampleEdit',
@@ -296,7 +296,7 @@ import {
 
 import PostModel from '../PostModel';
 
-import PostLoader from '../PostLoader';
+import Post, * as PostLoader from '../PostLoader';
 import PostConnection from '../PostConnection';
 
 export default mutationWithClientMutationId({
@@ -501,7 +501,7 @@ import {
 import PostModel from '../PostModel';
 
 import PostType from '../PostType';
-import PostLoader from '../PostLoader';
+import Post, * as PostLoader from '../PostLoader';
 
 export default mutationWithClientMutationId({
   name: 'PostEdit',
