@@ -8,6 +8,7 @@ import {
 import { getConfigDir } from '../config';
 import { camelCaseText, uppercaseFirstLetter } from '../ejsHelpers';
 import { getModulePath, getMutationPath, getTestPath } from '../paths';
+import { getDependencies } from '../parser/mongoose';
 
 class MutationGenerator extends Generator {
   constructor(args, options) {
@@ -30,14 +31,14 @@ class MutationGenerator extends Generator {
     return `${this.destinationDir}/${name}Mutation.js`;
   }
 
-  _parseSchema(schema) {
+  _parseSchema(schema, deps) {
     // Remove `GraphQLString` dependency from import if it exists,
     // it's already hard-coded on `MutationAdd` template.
-    const addDependencies = schema.dependencies.filter(dep => ['GraphQLString'].indexOf(dep) === -1);
+    const addDependencies = deps.dependencies.filter(dep => ['GraphQLString'].indexOf(dep) === -1);
 
     // Also remove `GraphQLString`, `GraphQLNonNull` & `GraphQLID` dependencies
     // from import if they exist, they are already hard-coded on `MutationEdit` template.
-    const editDependencies = schema.dependencies.filter(dep =>
+    const editDependencies = deps.dependencies.filter(dep =>
       ['GraphQLString', 'GraphQLNonNull', 'GraphQLID'].indexOf(dep) === -1,
     );
 
@@ -55,7 +56,7 @@ class MutationGenerator extends Generator {
 
       return {
         ...field,
-        type: `new GraphQLNonNull(${field.type})`,
+        type: `GraphQLNonNull(${field.type})`,
       };
     });
 
@@ -75,7 +76,8 @@ class MutationGenerator extends Generator {
     let schema = null;
     if (this.options.model) {
       const modelSchema = getMongooseModelSchema({ model: this.options.model });
-      schema = this._parseSchema(modelSchema);
+      const deps = getDependencies(modelSchema.fields);
+      schema = this._parseSchema(modelSchema, deps);
     }
 
     const name = uppercaseFirstLetter(this.options.name);

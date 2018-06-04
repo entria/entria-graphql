@@ -303,25 +303,25 @@ export default mutationWithClientMutationId({
   name: 'PostAdd',
   inputFields: {
     title: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: GraphQLNonNull(GraphQLString),
     },
     user: {
-      type: new GraphQLNonNull(GraphQLID),
+      type: GraphQLNonNull(GraphQLID),
     },
     slug: {
       type: GraphQLString,
     },
     tags: {
-      type: new GraphQLList(GraphQLString),
+      type: GraphQLList(GraphQLString),
     },
     oldSlugs: {
-      type: new GraphQLList(GraphQLString),
+      type: GraphQLList(GraphQLString),
     },
     comments: {
-      type: new GraphQLList(GraphQLID),
+      type: GraphQLList(GraphQLID),
     },
     externalComments: {
-      type: new GraphQLList(GraphQLID),
+      type: GraphQLList(GraphQLID),
     },
   },
   mutateAndGetPayload: async (args, { user }) => {
@@ -510,25 +510,25 @@ export default mutationWithClientMutationId({
       type: new GraphQLNonNull(GraphQLID),
     },
     title: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: GraphQLNonNull(GraphQLString),
     },
     user: {
-      type: new GraphQLNonNull(GraphQLID),
+      type: GraphQLNonNull(GraphQLID),
     },
     slug: {
       type: GraphQLString,
     },
     tags: {
-      type: new GraphQLList(GraphQLString),
+      type: GraphQLList(GraphQLString),
     },
     oldSlugs: {
-      type: new GraphQLList(GraphQLString),
+      type: GraphQLList(GraphQLString),
     },
     comments: {
-      type: new GraphQLList(GraphQLID),
+      type: GraphQLList(GraphQLID),
     },
     externalComments: {
-      type: new GraphQLList(GraphQLID),
+      type: GraphQLList(GraphQLID),
     },
   },
   mutateAndGetPayload: async (args, context) => {

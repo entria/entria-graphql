@@ -5,47 +5,52 @@ import { parseFieldToGraphQL } from './graphql';
 
 const { visit } = recast.types;
 
-type MongooseFields = {
-  [key: string]: MongooseFieldDefinition,
-};
-export const parseGraphQLSchema = (mongooseFields: MongooseFields, ref: boolean) => {
+export const getDependencies = (fields: GraphQLField[]) => {
   const dependencies = new Set();
   const typeDependencies = new Set();
   const loaderDependencies = new Set();
 
-  const fields: GraphQLField[] = Object.keys(mongooseFields).map((name: string) => {
-    const field = parseFieldToGraphQL(mongooseFields[name], ref);
-
-    // we have a special case for array types, since we need to add as dependency
-    //  both the GraphQLList and the type itself.
-    if (Array.isArray(field.type)) {
-      // array of scalar types
+  for (const field of fields) {
+    if (field.listType) {
       if (!field.graphqlType) {
-        dependencies.add(field.type[0]);
+        dependencies.add(field.listType);
       } else {
         typeDependencies.add(field.graphqlType);
         loaderDependencies.add(field.graphqlLoader);
       }
 
-      field.type = `GraphQLList(${field.type[0]})`;
-
       dependencies.add('GraphQLList');
-    } else if (field.graphqlType) {
+
+      continue;
+    }
+
+    if (field.graphqlType) {
       typeDependencies.add(field.graphqlType);
       loaderDependencies.add(field.graphqlLoader);
 
-    } else {
-      dependencies.add(field.type);
+      continue;
     }
 
-    return field;
+    dependencies.add(field.type);
+  }
+
+  return {
+    dependencies: [...dependencies],
+    typeDependencies: [...typeDependencies],
+    loaderDependencies: [...loaderDependencies],
+  };
+};
+
+type MongooseFields = {
+  [key: string]: MongooseFieldDefinition,
+};
+export const parseGraphQLSchema = (mongooseFields: MongooseFields, ref: boolean) => {
+  const fields: GraphQLField[] = Object.keys(mongooseFields).map((name: string) => {
+    return parseFieldToGraphQL(mongooseFields[name], ref);
   });
 
   return {
     fields,
-    dependencies: [...dependencies],
-    typeDependencies: [...typeDependencies],
-    loaderDependencies: [...loaderDependencies],
   };
 };
 
