@@ -1,6 +1,7 @@
 {
   "directories": {
-    "source": "src/modules",
+    "source": "src",
+    "module": "modules",
     "connection": "",
     "loader": "",
     "model": "",

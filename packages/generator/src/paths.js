@@ -11,4 +11,4 @@ export const getTestPath = (source: string) => {
 
 export const getMutationPath = (source: string) => {
   return path.join(source, 'mutation');
-}
+};
