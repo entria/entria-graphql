@@ -2,6 +2,42 @@
 import { uppercaseFirstLetter } from '../ejsHelpers';
 import type { MongooseFieldDefinition } from './mongoose';
 
+const MONGOOSE_TYPE_TO_GRAPHQL_TYPE = {
+  Number: 'GraphQLInt', // it could be a GraphQLFloat
+  Boolean: 'GraphQLBoolean',
+  Date: 'GraphQLString',
+  ObjectId: 'GraphQLID',
+  DEFAULT: 'GraphQLString',
+};
+
+const getGraphQLTypeFromMongooseType = (mongooseType: string, mongooseChildType?: string) => {
+  return mongooseType in MONGOOSE_TYPE_TO_GRAPHQL_TYPE
+    ? MONGOOSE_TYPE_TO_GRAPHQL_TYPE[mongooseType]
+    : MONGOOSE_TYPE_TO_GRAPHQL_TYPE.DEFAULT;
+};
+
+const MONGOOSE_TYPE_TO_FLOWTYPE = {
+  Number: 'number',
+  Boolean: 'boolean',
+  Date: 'Date',
+  ObjectId: 'string',
+  DEFAULT: 'string',
+};
+
+const getFlowtypeFromMongooseType = (mongooseType: string, mongooseChildType?: string) => {
+  if (mongooseType === 'Array') {
+    const flowtype = mongooseChildType in MONGOOSE_TYPE_TO_FLOWTYPE
+      ? MONGOOSE_TYPE_TO_FLOWTYPE[mongooseChildType]
+      : MONGOOSE_TYPE_TO_FLOWTYPE.DEFAULT;
+
+    return `${flowtype}[]`;
+  }
+
+  return mongooseType in MONGOOSE_TYPE_TO_FLOWTYPE
+    ? MONGOOSE_TYPE_TO_FLOWTYPE[mongooseType]
+    : MONGOOSE_TYPE_TO_FLOWTYPE.DEFAULT;
+};
+
 type GraphQLField = {
   name: string,
   description: string,
@@ -21,7 +57,7 @@ export const parseFieldToGraphQL = (field: MongooseFieldDefinition, ref: boolean
     description: field.description,
     required: !!field.required,
     originalType: field.type,
-    resolve: `obj.${field.name}`
+    resolve: `obj.${field.name}`,
   };
 
   const name = uppercaseFirstLetter(field.name);
@@ -36,20 +72,20 @@ export const parseFieldToGraphQL = (field: MongooseFieldDefinition, ref: boolean
     case 'Number':
       return {
         ...graphQLField,
-        type: 'GraphQLInt',
-        flowType: 'number',
+        type: getGraphQLTypeFromMongooseType(field.type),
+        flowType: getFlowtypeFromMongooseType(field.type),
       };
     case 'Boolean':
       return {
         ...graphQLField,
-        type: 'GraphQLBoolean',
-        flowType: 'boolean',
+        type: getGraphQLTypeFromMongooseType(field.type),
+        flowType: getFlowtypeFromMongooseType(field.type),
       };
     case 'Array':
       field.type = field.childType;
 
       parsedChildField = parseFieldToGraphQL(field, ref);
-      parsedChildField.flowType = 'array';
+      parsedChildField.flowType = getFlowtypeFromMongooseType('Array', parsedChildField.type);
       parsedChildField.type = [parsedChildField.type];
 
       if (field.childType === 'ObjectId' && ref) {
@@ -86,21 +122,21 @@ export const parseFieldToGraphQL = (field: MongooseFieldDefinition, ref: boolean
 
       return {
         ...graphQLField,
-        type: 'GraphQLID',
-        flowType: 'string',
+        type: getGraphQLTypeFromMongooseType(field.type),
+        flowType: getFlowtypeFromMongooseType(field.type),
       };
     case 'Date':
       return {
         ...graphQLField,
-        type: 'GraphQLString',
-        flowType: 'string',
+        type: getGraphQLTypeFromMongooseType(field.type),
+        flowType: getFlowtypeFromMongooseType(field.type),
         resolve: `obj.${field.name} ? obj.${field.name}.toISOString() : null`
       };
     default:
       return {
         ...graphQLField,
-        type: 'GraphQLString',
-        flowType: 'string'
+        type: getGraphQLTypeFromMongooseType(field.type),
+        flowType: getFlowtypeFromMongooseType(field.type),
       };
   }
 };
