@@ -13,7 +13,8 @@
     "prefer-destructuring": 1,
     "no-use-before-define": 1,
     "flowtype/define-flow-type": 1,
-    "flowtype/use-flow-type": 1
+    "flowtype/use-flow-type": 1,
+    "no-restricted-syntax": 1
   },
   "plugins": [
     "flowtype"

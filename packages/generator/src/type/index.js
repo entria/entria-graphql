@@ -8,6 +8,7 @@ import {
 import { getConfigDir } from '../config';
 import { uppercaseFirstLetter } from '../ejsHelpers';
 import { getModulePath, getTestPath } from '../paths';
+import { getDependencies } from '../parser/mongoose';
 
 class TypeGenerator extends Generator {
   constructor(args, options) {
@@ -50,15 +51,20 @@ class TypeGenerator extends Generator {
     const destinationPath = this.destinationPath(
       path.join(modulePath, `${typeFileName}.js`),
     );
+
+    const deps = schema ? getDependencies(schema.fields) : null;
+
     const templateVars = {
       name,
       schema,
+      deps,
       directories,
     };
 
     this._generateTypeTest({
       name,
       schema,
+      deps
     });
 
     this.fs.copyTpl(templatePath, destinationPath, templateVars);
@@ -68,7 +74,7 @@ class TypeGenerator extends Generator {
     return getRelativeConfigDir('type', ['model', 'type', 'loader', 'connection', 'interface']);
   }
 
-  _generateTypeTest({ name, schema }) {
+  _generateTypeTest({ name, schema, deps }) {
     const templatePath = this.templatePath('test/Type.js.template');
 
     const moduleName = this.options.name.toLowerCase();
@@ -85,6 +91,7 @@ class TypeGenerator extends Generator {
     const templateVars = {
       name,
       schema,
+      deps,
       directories,
     };
 

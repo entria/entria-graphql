@@ -2,8 +2,8 @@
 
 import {
   GraphQLObjectType,
-  <%_ for (i in schema.dependencies) { -%>
-  <%= schema.dependencies[i] %>,
+  <%_ for (i in deps.dependencies) { -%>
+  <%= deps.dependencies[i] %>,
   <%_ } -%>
 } from 'graphql';
 import { globalIdField } from 'graphql-relay';
@@ -11,11 +11,11 @@ import type { GraphQLObjectTypeConfig } from 'graphql';
 import type { GraphQLContext } from '../../TypeDefinition';
 
 import { NodeInterface } from '<%= directories.interface %>/NodeInterface';
-<%_ for (i in schema.typeDependencies) { -%>
-import <%= schema.typeDependencies[i] %> from '<%= directories.type %>/<%=schema.typeDependencies[i]%>';
+<%_ for (i in deps.typeDependencies) { -%>
+import <%= deps.typeDependencies[i] %> from '<%= directories.type %>/<%=deps.typeDependencies[i]%>';
 <%_ } -%>
-<%_ for (i in schema.loaderDependencies) { -%>
-import <%= schema.loaderDependencies[i] %> from '<%= directories.loader %>/<%=schema.loaderDependencies[i]%>';
+<%_ for (i in deps.loaderDependencies) { -%>
+import <%= deps.loaderDependencies[i] %> from '<%= directories.loader %>/<%=deps.loaderDependencies[i]%>';
 <%_ } -%>
 import <%= name %> from './<%= name %>Loader';
 

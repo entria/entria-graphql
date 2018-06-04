@@ -13,6 +13,7 @@ type GraphQLField = {
   flowType: string, // Flow Type
   graphqlType?: string, // graphql type name
   graphqlLoader?: string, // graphql loader name
+  listType?: string, // type when using GraphQLList
 }
 export const parseFieldToGraphQL = (field: MongooseFieldDefinition, ref: boolean): GraphQLField => {
   const graphQLField = {
@@ -36,13 +37,13 @@ export const parseFieldToGraphQL = (field: MongooseFieldDefinition, ref: boolean
       return {
         ...graphQLField,
         type: 'GraphQLInt',
-        flowType: 'number'
+        flowType: 'number',
       };
     case 'Boolean':
       return {
         ...graphQLField,
         type: 'GraphQLBoolean',
-        flowType: 'boolean'
+        flowType: 'boolean',
       };
     case 'Array':
       field.type = field.childType;
@@ -61,9 +62,13 @@ export const parseFieldToGraphQL = (field: MongooseFieldDefinition, ref: boolean
           resolve: `await ${loaderFileNameSingular}.load${name}ByIds(context, obj.${field.name})`,
           resolveArgs: 'async (obj, args, context)',
           graphqlType: typeFileNameSingular,
-          graphqlLoader: loaderFileNameSingular
+          graphqlLoader: loaderFileNameSingular,
         };
       }
+
+      // TODO - review this
+      parsedChildField.listType = parsedChildField.type[0];
+      parsedChildField.type = `GraphQLList(${parsedChildField.type[0]})`;
 
       return parsedChildField;
     case 'ObjectId':
@@ -82,7 +87,7 @@ export const parseFieldToGraphQL = (field: MongooseFieldDefinition, ref: boolean
       return {
         ...graphQLField,
         type: 'GraphQLID',
-        flowType: 'string'
+        flowType: 'string',
       };
     case 'Date':
       return {
