@@ -8,8 +8,10 @@ import {
   disconnectMongoose,
 } from '../../../test/helper';
 
-import User from '<%= directories.model %>/User';
-import <%= name %> from '<%= directories.model %>/<%= name %>';
+import {
+  User,
+  <%= name %>,
+} from '../../../../models';
 
 beforeAll(connectMongoose);
 

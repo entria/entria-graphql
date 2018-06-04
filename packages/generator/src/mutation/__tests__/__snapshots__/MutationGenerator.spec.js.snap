@@ -14,7 +14,7 @@ import {
 
 import ExampleModel from '../ExampleModel';
 
-import Example, * as ExampleLoader from '../ExampleLoader';
+import * as ExampleLoader from '../ExampleLoader';
 import ExampleConnection from '../ExampleConnection';
 
 export default mutationWithClientMutationId({
@@ -25,9 +25,9 @@ export default mutationWithClientMutationId({
       description: 'My example field',
     },
   },
-  mutateAndGetPayload: async ({ example }, { user }) => {
+  mutateAndGetPayload: async ({ example }, context) => {
     // Verify if user is authorized
-    if (!user) {
+    if (!context.user) {
       throw new Error('Unauthorized user');
     }
 
@@ -53,7 +53,7 @@ export default mutationWithClientMutationId({
         }
 
         return {
-          cursor: toGlobalId('Example', example),
+          cursor: toGlobalId('Example', example._id),
           node: example,
         };
       },
@@ -74,8 +74,10 @@ import {
   disconnectMongoose,
 } from '../../../test/helper';
 
-import { User } from '.';
-import Example from './Example';
+import {
+  User,
+  Example,
+} from '../../../../models';
 
 beforeAll(connectMongoose);
 
@@ -148,7 +150,7 @@ import {
 import ExampleModel from '../ExampleModel';
 
 import ExampleType from '../ExampleType';
-import Example, * as ExampleLoader from '../ExampleLoader';
+import * as ExampleLoader from '../ExampleLoader';
 
 export default mutationWithClientMutationId({
   name: 'ExampleEdit',
@@ -161,10 +163,8 @@ export default mutationWithClientMutationId({
     },
   },
   mutateAndGetPayload: async (args, context) => {
-    const { user } = context;
-
     // Verify if user is authorized
-    if (!user) {
+    if (!context.user) {
       throw new Error('Unauthorized user');
     }
 
@@ -215,8 +215,10 @@ import {
   disconnectMongoose,
 } from '../../../test/helper';
 
-import User from './User';
-import Example from './Example';
+import {
+  User,
+  Example,
+} from '../../../../models';
 
 beforeAll(connectMongoose);
 
@@ -296,7 +298,7 @@ import {
 
 import PostModel from '../PostModel';
 
-import Post, * as PostLoader from '../PostLoader';
+import * as PostLoader from '../PostLoader';
 import PostConnection from '../PostConnection';
 
 export default mutationWithClientMutationId({
@@ -324,9 +326,9 @@ export default mutationWithClientMutationId({
       type: GraphQLList(GraphQLID),
     },
   },
-  mutateAndGetPayload: async (args, { user }) => {
+  mutateAndGetPayload: async (args, context) => {
     // Verify if user is authorized
-    if (!user) {
+    if (!context.user) {
       throw new Error('Unauthorized user');
     }
 
@@ -373,7 +375,7 @@ export default mutationWithClientMutationId({
         }
 
         return {
-          cursor: toGlobalId('Post', post),
+          cursor: toGlobalId('Post', post._id),
           node: post,
         };
       },
@@ -394,8 +396,10 @@ import {
   disconnectMongoose,
 } from '../../../test/helper';
 
-import User from './User';
-import Post from './Post';
+import {
+  User,
+  Post,
+} from '../../../../models';
 
 beforeAll(connectMongoose);
 
@@ -501,7 +505,7 @@ import {
 import PostModel from '../PostModel';
 
 import PostType from '../PostType';
-import Post, * as PostLoader from '../PostLoader';
+import * as PostLoader from '../PostLoader';
 
 export default mutationWithClientMutationId({
   name: 'PostEdit',
@@ -532,10 +536,8 @@ export default mutationWithClientMutationId({
     },
   },
   mutateAndGetPayload: async (args, context) => {
-    const { user } = context;
-
     // Verify if user is authorized
-    if (!user) {
+    if (!context.user) {
       throw new Error('Unauthorized user');
     }
 
@@ -603,8 +605,10 @@ import {
   disconnectMongoose,
 } from '../../../test/helper';
 
-import User from './User';
-import Post from './Post';
+import {
+  User,
+  Post,
+} from '../../../../models';
 
 beforeAll(connectMongoose);
 
