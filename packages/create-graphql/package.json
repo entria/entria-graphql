@@ -1,7 +1,7 @@
 {
   "name": "@entria/create-graphql",
   "description": "Create production-ready GraphQL servers",
-  "version": "0.0.8",
+  "version": "0.0.13",
   "author": {
     "name": "Entria",
     "url": "https://github.com/entria"
