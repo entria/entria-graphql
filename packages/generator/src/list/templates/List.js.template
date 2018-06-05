@@ -1,120 +1,313 @@
 // @flow
+import * as React from 'react';
+import { graphql, createRefetchContainer } from 'react-relay/compat';
+import { withRouter } from 'react-router-dom';
+import styled from 'styled-components';
+import { hot } from 'react-hot-loader';
 
-import React, { Component } from 'react';
-import Relay from 'react-relay';
-import { withRouter } from 'react-router';
+import { Table, Content, InputFieldAlongside, Icon } from '../common';
+import { ActionButton, Actions, RefreshButton } from '../Subheader';
+import createQueryRenderer from '../../relay/createQueryRenderer';
+import { routeTo } from '../../router/utils/routeTo';
 
-import Table from '../common/Table';
-import Toolbar from '../common/Toolbar';
+import type { ContextRouter } from 'react-router-dom';
+import type { RelayRefetchProp } from 'react-relay';
+import type { TableColumn } from '../common/Table/Table';
+import type { <%= name %>List_viewer } from './__generated__/<%= name %>List_viewer.graphql';
 
-class <%= name %>List extends Component {
+const TableContainer = styled.div`
+  background: #ffffff;
+  padding: 10px;
+  margin: 10px;
+  box-shadow: 3px 1px 3px 0 rgba(0, 0, 0, 0.3);
+`;
+
+const SearchField = styled.div`
+  width: 280px;
+  padding: 10px 0 0 25px;
+  div {
+    border-bottom: 1px solid lightgrey;
+    height: auto;
+    input {
+      border-bottom: none !important;
+      padding: 10px;
+      color: #9e9e9e !important;
+      background-color: rgba(0, 0, 0, 0) !important;
+      margin-left: 20px;
+    }
+    input::placeholder {
+      font-weight: 300;
+      color: #9e9e9e !important;
+    }
+  }
+`;
+
+const NewButton = styled(ActionButton)`
+  height: 26px;
+  width: 200px;
+`;
+
+type Props = {
+  viewer: <%= name %>List_viewer,
+  relay: RelayRefetchProp,
+} & ContextRouter;
+
+type State = {
+  isLoading: boolean,
+  quantityPerPage: number,
+  searchValue: ?string,
+};
+class <%= name %>List extends Component<Props, State> {
   state = {
-    isLoading: true,
+    isLoading: false,
+    quantityPerPage: 10,
+    searchValue: null,
   };
 
-  tableColumns = [
+  // TODO - add more columns
+  tableColumns: TableColumn<any>[] = [
     {
-      property: '',
+      property: 'name',
       header: {
-        label: 'Actions',
-      },
-      icon: 'mode_edit',
-      type: 'icon',
-      clickPath: '/<%= pluralCamelCaseName %>/view/:id',
-    },
-    {
-      property: 'id',
-      header: {
-        label: 'ID',
+        label: 'Nome',
       },
     },
-    // TODO - add more fields to table
   ];
 
-  componentDidMount = () => {
+  handleRefreshList = () => {
+    this.setState({
+      isLoading: true,
+    });
+
+    const refetchVariables = fragmentVariables => ({
+      ...fragmentVariables,
+    });
+    this.props.relay.refetch(
+      refetchVariables,
+      null,
+      () => {
+        this.setState({
+          isFetching: false,
+        });
+      },
+      {
+        force: true,
+      },
+    );
+  };
+
+  handleView<%= name %> = ({ id }) => this.props.history.push(routeTo('<%= name.toLowerCase() %>.view', { id }));
+
+  setQuantityPerPage = value => {
+    this.setState({ quantityPerPage: value }, () => this.loadPage(true, value));
+  };
+
+  loadPage = async (isForward, increasePgSize) => {
+    const { relay, viewer } = this.props;
+
+    this.setState({
+      isLoading: true,
+    });
+
+    const refetchVariables = isForward
+      ? this.loadPageForwardVars(viewer, increasePgSize)
+      : this.loadPageBackwardsVars(viewer);
+
+    await relay.refetch(refetchVariables, null);
+
     this.setState({
       isLoading: false,
     });
   };
 
-  _handleNew = () => this.props.router.push('/<%= pluralName %>/new');
-
-  _handleRefreshList = () => {
-    this.setState({
-      isLoading: true,
-    });
-
-    this.props.relay.forceFetch({}, ({ done }) => {
-      if (done) {
-        this.setState({
-          isLoading: false,
-        });
-      }
+  loadPageForwardVars = (viewer, increasePgSize) => {
+    const lastItem = viewer.products.pageInfo.endCursor;
+    return fragmentVariables => ({
+      ...fragmentVariables,
+      first: increasePgSize || this.state.quantityPerPage,
+      after: increasePgSize ? null : lastItem,
     });
   };
 
-  _handleLoadMore = () => {
-    const { relay } = this.props;
+  loadPageBackwardsVars = viewer => {
+    const firstItem = viewer.products.pageInfo.startCursor;
+    return fragmentVariables => ({
+      ...fragmentVariables,
+      last: this.state.quantityPerPage,
+      first: null,
+      before: firstItem,
+    });
+  };
+
+  handleSearch = e => {
+    e.persist();
+
+    const refetchVariables = fragmentVariables => ({
+      ...fragmentVariables,
+      search: e.target.value,
+    });
 
     this.setState({
       isLoading: true,
     });
 
-    relay.setVariables({
-      count: relay.variables.count + 10,
-    }, ({ done }) => {
-      if (done) {
-        this.setState({
-          isLoading: false,
-        });
-      }
+    this.props.relay.refetch(refetchVariables, null, () => {
+      this.setState({
+        searchValue: e.target.value,
+        isLoading: false,
+      });
     });
+  };
+
+  handleRefreshList = () => {
+    const refetchVariables = fragmentVariables => ({
+      ...fragmentVariables,
+      first: 10,
+    });
+
+    this.setState({
+      isLoading: true,
+    });
+
+    this.props.relay.refetch(refetchVariables, null, () => {
+      this.setState({
+        isLoading: false,
+      });
+    });
+  };
+
+  handleNewProduct = () => {
+    this.props.history.push(routeTo('<%= name.toLowerCase() %>.add'));
   };
 
   render() {
-    const { isLoading } = this.state;
+    const { <%= pluralName %> } = this.props.viewer;
+    const { searchValue, isLoading, quantityPerPage } = this.state;
+
+    const { pageInfo, endCursorOffset, startCursorOffset, totalCount } = <%= pluralName %>;
+    const actions = (
+      <Actions>
+        <NewButton
+          icon={<Icon> add </Icon>}
+          label="Cadastrar <%= name %>"
+          onClick={this.handleNew<%= name %>}
+        />
+        <RefreshButton onRefresh={this.handleRefreshList} />
+      </Actions>
+    );
 
     return (
-      <div>
-        <Toolbar
-          title="<%= pluralName %>"
-          primaryActionLabel="New <%= name %>"
-          primaryActionOnClick={this._handleNew}
-          onRefresh={this._handleRefreshList}
-        />
-
-        <Table
-          name="<%= name %>"
-          columns={this.tableColumns}
-          rows={this.props.viewer.<%= pluralCamelCaseName %>}
-          router={this.props.router}
-          onLoadMore={this._handleLoadMore}
-          isLoading={isLoading}
-        />
-      </div>
+      <Content title="<%= pluralName %>" actions={actions}>
+        <SearchField>
+          <InputFieldAlongside
+            name="search"
+            label={null}
+            defaultValue={searchValue}
+            sideContent={<Icon style={styles.icon}>search</Icon>}
+            disabled={false}
+            onChangeValue={this.handleSearch}
+            type="text"
+            placeholder="Buscar <%= pluralName %>"
+          />
+        </SearchField>
+        <TableContainer>
+          <Table
+            columns={this.tableColumns}
+            rows={<%= pluralName %>}
+            onRowClick={this.handleViewProduct}
+            isLoading={isLoading}
+            hasNextPage={pageInfo.hasNextPage}
+            totalItems={totalCount}
+            rowsPerPage={quantityPerPage}
+            handleRowsPerPageChange={this.setQuantityPerPage}
+            firstItemIndex={startCursorOffset}
+            lastItemIndex={endCursorOffset}
+            handlePageChange={this.loadPage}
+          />
+        </TableContainer>
+      </Content>
     );
   }
 }
 
-export default Relay.createContainer(withRouter(<%= name %>List), {
-  initialVariables: {
-    count: 20,
+const styles = {
+  icon: {
+    left: -255,
+    color: '#616161',
+    cursor: 'pointer',
   },
-  fragments: {
-    viewer: () => Relay.QL`
-      fragment on Viewer {
-        <%= pluralCamelCaseName %>(first: $count) {
+};
+
+const <%= name %>ListRefetchContainer = createRefetchContainer(
+  <%= name %>List,
+  {
+    viewer: graphql`
+      fragment <%= name %>List_viewer on Viewer
+        @argumentDefinitions(
+          first: { type: Int }
+          last: { type: Int }
+          before: { type: String }
+          after: { type: String }
+          search: { type: String }
+        ) {
+        <%= pluralName %>(first: $first, last: $last, after: $after, before: $before, search: $search)
+          @connection(key: "<%= name %>List_<%= pluralName %>", filters: []) {
+          endCursorOffset
+          startCursorOffset
+          count
           pageInfo {
             hasNextPage
+            hasPreviousPage
+            startCursor
+            endCursor
           }
           edges {
             node {
               id
-              // TODO - add relay fields
+              name
             }
           }
+          totalCount
         }
       }
     `,
   },
-});
+  graphql`
+    query <%= name %>ListRefetchQuery(
+      $after: String
+      $before: String
+      $first: Int
+      $last: Int
+      $search: String
+    ) {
+      viewer {
+        ...<%= name %>List_viewer
+          @arguments(first: $first, last: $last, after: $after, before: $before, search: $search)
+      }
+    }
+  `,
+);
+
+export default hot(module)(
+  createQueryRenderer(<%= name %>ListRefetchContainer, <%= name %>List, {
+    query: graphql`
+      query <%= name %>ListQuery(
+        $after: String
+        $before: String
+        $first: Int
+        $last: Int
+        $search: String
+      ) {
+        viewer {
+          ...<%= name %>List_viewer
+            @arguments(first: $first, last: $last, after: $after, before: $before, search: $search)
+        }
+      }
+    `,
+    variables: {
+      first: 10,
+      cursor: null,
+      search: '',
+    },
+  }),
+);
