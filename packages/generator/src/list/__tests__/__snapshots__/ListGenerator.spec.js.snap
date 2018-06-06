@@ -5,7 +5,6 @@ Object {
   "list": "// @flow
 import * as React from 'react';
 import { graphql, createRefetchContainer } from 'react-relay/compat';
-import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import { hot } from 'react-hot-loader';
 
@@ -61,7 +60,7 @@ type State = {
   quantityPerPage: number,
   searchValue: ?string,
 };
-class ExampleList extends Component<Props, State> {
+class ExampleList extends React.Component<Props, State> {
   state = {
     isLoading: false,
     quantityPerPage: 10,
@@ -185,10 +184,10 @@ class ExampleList extends Component<Props, State> {
   };
 
   render() {
-    const { Examples } = this.props.viewer;
+    const { examples } = this.props.viewer;
     const { searchValue, isLoading, quantityPerPage } = this.state;
 
-    const { pageInfo, endCursorOffset, startCursorOffset, totalCount } = Examples;
+    const { pageInfo, endCursorOffset, startCursorOffset, totalCount } = examples;
     const actions = (
       <Actions>
         <NewButton
@@ -217,7 +216,7 @@ class ExampleList extends Component<Props, State> {
         <TableContainer>
           <Table
             columns={this.tableColumns}
-            rows={Examples}
+            rows={examples}
             onRowClick={this.handleViewProduct}
             isLoading={isLoading}
             hasNextPage={pageInfo.hasNextPage}
@@ -254,8 +253,8 @@ const ExampleListRefetchContainer = createRefetchContainer(
           after: { type: String }
           search: { type: String }
         ) {
-        Examples(first: $first, last: $last, after: $after, before: $before, search: $search)
-          @connection(key: \\"ExampleList_Examples\\", filters: []) {
+        examples(first: $first, last: $last, after: $after, before: $before, search: $search)
+          @connection(key: \\"ExampleList_examples\\", filters: []) {
           endCursorOffset
           startCursorOffset
           count

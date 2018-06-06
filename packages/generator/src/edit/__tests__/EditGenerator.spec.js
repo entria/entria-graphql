@@ -6,7 +6,7 @@ import {
   getFileContent,
 } from '../../../test/helpers';
 
-import { getConfigDir } from '../../utils';
+import { getConfigDir } from '../../config';
 
 const editGenerator = path.join(__dirname, '..');
 
