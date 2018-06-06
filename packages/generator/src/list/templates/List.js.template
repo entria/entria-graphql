@@ -1,7 +1,6 @@
 // @flow
 import * as React from 'react';
 import { graphql, createRefetchContainer } from 'react-relay/compat';
-import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import { hot } from 'react-hot-loader';
 
@@ -57,7 +56,7 @@ type State = {
   quantityPerPage: number,
   searchValue: ?string,
 };
-class <%= name %>List extends Component<Props, State> {
+class <%= name %>List extends React.Component<Props, State> {
   state = {
     isLoading: false,
     quantityPerPage: 10,
@@ -181,10 +180,10 @@ class <%= name %>List extends Component<Props, State> {
   };
 
   render() {
-    const { <%= pluralName %> } = this.props.viewer;
+    const { <%= pluralName.toLowerCase() %> } = this.props.viewer;
     const { searchValue, isLoading, quantityPerPage } = this.state;
 
-    const { pageInfo, endCursorOffset, startCursorOffset, totalCount } = <%= pluralName %>;
+    const { pageInfo, endCursorOffset, startCursorOffset, totalCount } = <%= pluralName.toLowerCase() %>;
     const actions = (
       <Actions>
         <NewButton
@@ -213,7 +212,7 @@ class <%= name %>List extends Component<Props, State> {
         <TableContainer>
           <Table
             columns={this.tableColumns}
-            rows={<%= pluralName %>}
+            rows={<%= pluralName.toLowerCase() %>}
             onRowClick={this.handleViewProduct}
             isLoading={isLoading}
             hasNextPage={pageInfo.hasNextPage}
@@ -250,8 +249,8 @@ const <%= name %>ListRefetchContainer = createRefetchContainer(
           after: { type: String }
           search: { type: String }
         ) {
-        <%= pluralName %>(first: $first, last: $last, after: $after, before: $before, search: $search)
-          @connection(key: "<%= name %>List_<%= pluralName %>", filters: []) {
+        <%= pluralName.toLowerCase() %>(first: $first, last: $last, after: $after, before: $before, search: $search)
+          @connection(key: "<%= name %>List_<%= pluralName.toLowerCase() %>", filters: []) {
           endCursorOffset
           startCursorOffset
           count
