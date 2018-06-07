@@ -109,10 +109,10 @@ export default new GraphQLObjectType(
         description: '',
         resolve: obj => obj.title,
       },
-      user: {
+      author: {
         type: UserType,
         description: 'User that created this post',
-        resolve: async (obj, args, context) => await UserLoader.load(context, obj.user),
+        resolve: async (obj, args, context) => await UserLoader.load(context, obj.author),
       },
       slug: {
         type: GraphQLString,
