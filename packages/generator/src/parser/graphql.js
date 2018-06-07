@@ -61,8 +61,8 @@ export const parseFieldToGraphQL = (field: MongooseFieldDefinition, ref: boolean
   };
 
   const name = uppercaseFirstLetter(field.name);
-  const typeFileName = `${name}Type`;
-  const loaderFileName = `${name}Loader`;
+  const typeFileName = field.ref ? `${field.ref}Type` : `${name}Type`;
+  const loaderFileName = field.ref ? `${field.ref}Loader` : `${name}Loader`;;
 
   let parsedChildField;
   let typeFileNameSingular;
@@ -116,7 +116,7 @@ export const parseFieldToGraphQL = (field: MongooseFieldDefinition, ref: boolean
           resolve: `await ${loaderFileName}.load(context, obj.${field.name})`,
           resolveArgs: 'async (obj, args, context)',
           graphqlType: typeFileName,
-          graphqlLoader: loaderFileName
+          graphqlLoader: loaderFileName,
         };
       }
 
