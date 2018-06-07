@@ -110,54 +110,51 @@ export default Relay.createContainer(withRouter(ExampleEdit), {
   },
 });
 ",
-  "editMutation": "import Relay from 'react-relay';
+  "editMutation": "// @flow
+import { commitMutation, graphql } from 'react-relay/compat';
 
-export default class ExampleEditMutation extends Relay.Mutation {
-  static fragments = {
-    example: () => Relay.QL\`
-      fragment on Example {
+import RelayStore from '../../relay/RelayStore';
+
+import type {
+  ExampleEditMutationVariables,
+  ExampleEditMutationResponse,
+} from './__generated__/ExampleEditMutation.graphql';
+
+type ExampleEditMutationInput = $PropertyType<
+  ExampleEditMutationVariables,
+  'input',
+>;
+
+const mutation = graphql\`
+  mutation ExampleEditMutation($input: ExampleEditInput!) {
+    ExampleEdit(input: $input) {
+      example {
         id
       }
-    \`,
+      error
+    }
+  }
+\`;
+
+const commit = (
+  input: ExampleEditMutationInput,
+  onCompleted: (response: ExampleEditMutationResponse) => void,
+  onError: (error: Error) => void,
+) => {
+  const variables = {
+    input,
   };
 
-  getMutation() {
-    return Relay.QL\`mutation {
-      ExampleEdit
-    }\`;
-  }
+  commitMutation(RelayStore._env, {
+    mutation,
+    variables,
+    onCompleted,
+    onError,
+  });
+};
 
-  getVariables() {
-    const {
-      example: {
-        id,
-      },
-      // Todo add more mutation input fields here
-    } = this.props;
+export default { commit };
 
-    return {
-      id,
-      // TODO add more mutation input fields here
-    };
-  }
-
-  getFatQuery() {
-    return Relay.QL\`
-      fragment on ExampleEditPayload {
-        example
-      }
-    \`;
-  }
-
-  getConfigs() {
-    return [{
-      type: 'FIELDS_CHANGE',
-      fieldIDs: {
-        example: this.props.example.id,
-      },
-    }];
-  }
-}
 ",
 }
 `;
