@@ -38,7 +38,7 @@ const GENERATED_FILES = [
 ];
 
 export const copyFixturesToModules = (dir: string, moduleName?: string) => {
-  FIXTURES_MODULES.map((module) => {
+  FIXTURES_MODULES.forEach((module) => {
     const name = uppercaseFirstLetter(module);
     const modulePath = getModulePath(module);
 
@@ -51,7 +51,7 @@ export const copyFixturesToModules = (dir: string, moduleName?: string) => {
       return;
     }
 
-    GENERATED_FILES.map((getFilename) => {
+    GENERATED_FILES.forEach((getFilename) => {
       fs.copySync(
         getFixturePath(module),
         path.join(dir, modulePath, getFilename(name)),
