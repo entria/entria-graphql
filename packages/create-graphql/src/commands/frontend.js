@@ -2,7 +2,7 @@
 import spawn from 'cross-spawn-promise';
 
 function parseOptions(opts) {
-  const availableOptions = ['add', 'edit', 'list', 'view'];
+  const availableOptions = ['add', 'edit', 'list', 'view', 'form'];
 
   // Check if any commands was provided
   const anyCommandsProvided = Object.keys(opts).some(option =>
@@ -18,6 +18,7 @@ function parseOptions(opts) {
       edit: true,
       list: true,
       view: true,
+      form: true,
       ...options,
     };
   }
@@ -27,6 +28,7 @@ function parseOptions(opts) {
     edit,
     list,
     view,
+    form,
     schema,
   } = options;
 
@@ -35,6 +37,7 @@ function parseOptions(opts) {
     edit: edit || false,
     list: list || false,
     view: view || false,
+    form: form || false,
     schema: schema || false,
   };
 }

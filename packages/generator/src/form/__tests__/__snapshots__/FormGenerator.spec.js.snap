@@ -1,0 +1,262 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`generate a form file 1`] = `
+"// @flow
+import * as React from 'react';
+import { graphql, createFragmentContainer } from 'react-relay/compat';
+import styled from 'styled-components';
+import { withRouter } from 'react-router-dom';
+import { withFormik } from 'formik';
+import Yup from 'yup';
+
+import type { ContextRouter } from 'react-router-dom';
+import type { FormikProps } from 'formik';
+
+import withSnackbar, { type SnackbarContextProps } from '../../hoc/withSnackbar';
+
+import { routeTo } from '../../router/utils';
+import { Button, ToggleFormik, InputFieldFormik } from '../common';
+
+import type { ExampleForm_viewer } from './__generated__/ExampleForm_viewer.graphql';
+import type { ExampleForm_node } from './__generated__/ExampleForm_node.graphql';
+
+import ExampleAddMutation from './ExampleAddMutation';
+import ExampleEditMutation from './ExampleEditMutation';
+
+const FormContainer = styled.div\`
+  display: flex;
+  flex-wrap: wrap;
+  padding-top: 25px;
+  flex-direction: column;
+\`;
+
+const ButtonWrapper = styled.div\`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+\`;
+
+const InputField = styled(InputFieldFormik).attrs({
+  style: {
+    marginTop: 25,
+    marginBottom: 33,
+    padding: 0,
+    border: 'none',
+    width: '100%',
+    paddingBottom: 10,
+    fontSize: 14,
+  },
+  floatingLabelStyle: {
+    height: '16px',
+    fontSize: '15px',
+    lineHeight: '1.33',
+    letterSpacing: 'normal',
+    textAlign: 'left',
+    color: '#607389',
+  },
+  underlineFocusStyle: {
+    borderBottom: '2px solid rgb(72, 144, 229)',
+  },
+  underlineStyle: {
+    borderBottom: '2px solid #D0D0D0',
+  },
+  underlineShow: true,
+})\`\`;
+
+const ToggleBox = styled.div\`
+  display: flex;
+  align-items: center;
+\`;
+
+const ToggleText = styled.p\`
+  height: 16px;
+  font-size: 12px;
+  line-height: 1.33;
+  letter-spacing: normal;
+  text-align: left;
+  color: #607389;
+  width: 100px;
+\`;
+
+type OwnProps = {
+  viewer: ExampleForm_viewer,
+  node: ExampleForm_node,
+};
+type Props = OwnProps & FormikProps<OwnProps, Values> & SnackbarContextProps & ContextRouter;
+class ExampleFormInnerFrom extends React.PureComponent<Props> {
+  handleBack = () => {
+    const { history, node } = this.props;
+
+    if (node) return history.push(routeTo('example.view', { id: node.id }));
+
+    return history.push(routeTo('example.list'));
+  };
+
+  render() {
+    const { handleSubmit, isSubmitting, isValid } = this.props;
+
+    return (
+      <form onSubmit={handleSubmit}>
+        <FormContainer>
+          <InputField name=\\"name\\" floatingLabelText=\\"Nome\\" required={true} hintText={null} />
+          <InputField
+            name=\\"description\\"
+            floatingLabelText=\\"Descrição\\"
+            hintText={null}
+            required={true}
+          />
+          <ToggleBox>
+            <ToggleText>Está ativo?</ToggleText>
+            <ToggleFormik name=\\"active\\" />
+          </ToggleBox>
+          <ButtonWrapper>
+            <Button
+              type=\\"button\\"
+              label=\\"Cancelar\\"
+              buttonType=\\"flat\\"
+              labelStyle={{ color: '#757575' }}
+              onClick={this.handleBack}
+            />
+            <Button
+              type=\\"submit\\"
+              label={isSubmitting ? 'Salvando..' : 'Salvar'}
+              disabled={isSubmitting || !isValid}
+              buttonType=\\"flat\\"
+              labelStyle={{ color: '#4890E5' }}
+              onClick={handleSubmit}
+            />
+          </ButtonWrapper>
+        </FormContainer>
+      </form>
+    );
+  }
+}
+
+type Values = {
+  name: string,
+  active: boolean,
+};
+const ExampleForm = withFormik({
+  validationSchema: Yup.object().shape({
+    name: Yup.string().required('É necessário um nome'),
+    active: Yup.boolean(),
+  }),
+  mapPropsToValues: ({ node }: OwnProps) => {
+    if (node) {
+      return {
+        name: node.name,
+        active: node.active || false,
+      };
+    }
+
+    return {
+      name: '',
+      active: true,
+    };
+  },
+  handleSubmit: (values: Values, formikBag) => {
+    const { setSubmitting, props } = formikBag;
+    const { name, active } = values;
+    const { history, showSnackbar, viewer, node, isSubmitting } = props;
+
+    const isEditting = !!node;
+
+    // TODO - handle Edit
+    if (isSubmitting) return;
+
+    if (isEditting) {
+      const input = {
+        id: node.id,
+        name,
+        active,
+      };
+
+      const onCompleted = ({ ExampleEdit }) => {
+        setSubmitting(false);
+
+        if (ExampleEdit.error) {
+          showSnackbar({
+            message: ExampleEdit.error,
+          });
+
+          return;
+        }
+
+        showSnackbar({
+          message: 'Example editado com sucesso!',
+        });
+
+        return history.push(routeTo('example.view', { id: node.id }));
+      };
+
+      const onError = () => {
+        setSubmitting(false);
+
+        showSnackbar({
+          message: 'Ocorreu um erro ao tentar editar o Produto.',
+        });
+      };
+
+      ExampleEditMutation.commit(input, onCompleted, onError);
+
+      return;
+    }
+
+    const input = {
+      name,
+      description,
+      active,
+    };
+
+    const onCompleted = ({ ExampleAdd }) => {
+      setSubmitting(false);
+
+      if (ExampleAdd.error) {
+        showSnackbar({
+          message: ExampleAdd.error,
+        });
+
+        return;
+      }
+
+      showSnackbar({
+        message: 'Example criado com sucesso!',
+      });
+
+      history.push(routeTo('example'));
+    };
+
+    const onError = () => {
+      setSubmitting(false);
+
+      showSnackbar({
+        message: 'Ocorreu um erro ao tentar criar o Example.',
+      });
+    };
+
+    ExampleAddMutation.commit(viewer.id, input, onCompleted, onError);
+  },
+})(ExampleFormInnerFrom);
+
+const ExampleFormFormFragmentContainer = createFragmentContainer(ExampleForm, {
+  node: graphql\`
+    fragment ExampleForm_node on Node {
+      id
+      ... on Example {
+        id
+        name
+        active
+        # add more fields
+      }
+    }
+  \`,
+  viewer: graphql\`
+    fragment ExampleForm_viewer on Viewer {
+      id
+    }
+  \`,
+});
+
+export default withRouter(withSnackbar(ExampleFormFormFragmentContainer));
+"
+`;

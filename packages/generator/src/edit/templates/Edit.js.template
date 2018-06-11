@@ -1,107 +1,46 @@
-import React, { Component, PropTypes } from 'react';
-import Relay from 'react-relay';
-import RelayStore from '../../../RelayStore';
-import { withRouter } from 'react-router';
+//@flow
+import * as React from 'react';
+import { graphql, createFragmentContainer } from 'react-relay/compat';
+import { hot } from 'react-hot-loader';
 
-import <%= name %>EditMutation from './<%= name %>EditMutation.js';
+import createQueryRenderer from '../../relay/createQueryRenderer';
 
-import Form from '../../common/Form';
+import <%= name %>Form from './<%= name %>Form';
+import type { <%= name %>Edit_viewer } from './__generated__/<%= name %>Edit_viewer.graphql';
 
-class <%= name %>Edit extends Component {
-  static contextTypes = {
-    showSnackbar: PropTypes.func,
-  };
-
-  fields = [
-    {
-      name: 'id',
-      placeholder: 'ID',
-      required: true,
-    },
-    // TODO - add ObjectType fields here
-  ];
-
-  onSubmit = (data) => {
-    const { <%= camelCaseName %> } = this.props;
-
-    const mutation = new <%= name %>EditMutation({
-      <%= camelCaseName %>,
-      ...data,
-    });
-
-    RelayStore.commitUpdate(mutation, {
-      onSuccess: () => {
-        this.context.showSnackbar({
-          message: '<%= name %> edited successfully!',
-        });
-
-        this.props.router.goBack();
-      },
-      onFailure: (failureResponse) => {
-        this.context.showSnackbar({
-          message: 'There was an error while trying to edit this <%= rawName %>.',
-        });
-
-        console.log('FAIL', failureResponse);
-      },
-    });
-  };
-
+type Props = {
+  viewer: <%= name %>Edit_viewer,
+};
+class <%= name %>Edit extends React.PureComponent<Props> {
   render() {
-    const { <%= camelCaseName %> } = this.props;
+    const { viewer } = this.props;
+    const { _node } = viewer;
 
-    return (
-      <Form
-        fields={this.fields}
-        onSubmit={this.onSubmit}
-        value={<%= camelCaseName %>}
-      />
-    );
+    return <<%= name %>Form viewer={viewer} node={_node} />;
   }
 }
 
-const styles = {
-  formContainer: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    paddingTop: 30,
-    paddingLeft: 10,
-  },
-  actionsContainer: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    marginTop: 5,
-    paddingRight: 8,
-    borderTopStyle: 'solid',
-    borderTopWidth: 1,
-    paddingTop: 15,
-    borderColor: '#ECECEC',
-  },
-  formField: {
-    marginRight: 10,
-    flex: '1 0 47%',
-  },
-  selectField: {
-    marginRight: 10,
-    flex: '1 0 48%',
-  },
-};
-
-export default Relay.createContainer(withRouter(<%= name %>Edit), {
-  initialVariables: {
-    id: null,
-  },
-  fragments: {
-    <%= camelCaseName %>: () => Relay.QL`
-      fragment on <%= name %> {
-        id
-        ${<%= name %>EditMutation.getFragment('<%= camelCaseName %>')}
+const <%= name %>EditFragment = createFragmentContainer(<%= name %>Edit, {
+  viewer: graphql`
+    fragment <%= name %>Edit_viewer on Viewer {
+      id
+      ...<%= name %>Form_viewer
+      _node(id: $id) {
+        ...<%= name %>Form_node
       }
-    `,
-    viewer: () => Relay.QL`
-      fragment on Viewer {
-        id
-      }
-    `,
-  },
+    }
+  `,
 });
+
+export default hot(module)(
+  createQueryRenderer(<%= name %>EditFragment, <%= name %>Edit, {
+    query: graphql`
+      query <%= name %>EditQuery($id: ID!) {
+        viewer {
+          ...<%= name %>Edit_viewer
+        }
+      }
+    `,
+    queriesParams: ({ match: { params } }) => ({ id: params.id }),
+  }),
+);
