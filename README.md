@@ -24,23 +24,23 @@ Check out the post *[Announcing Create-GraphQL](https://medium.com/entria/announ
 
 #### With Yarn:
 ```sh
-yarn global add create-graphql
+yarn global add @entria/create-graphql @entria/graphql-generator
 ```
 
 #### With NPM:
 ```sh
-npm install --global create-graphql
+npm i -g @entria/create-graphql @entria/graphql-generator
 ```
 
 ## Usage
 You can create a brand new GraphQL project:
 ```sh
-create-graphql init GraphQLProject
+entria-graphql init GraphQLProject
 ```
 
 And can generate single files for [Mutation](docs/Commands.md#--mutation--m), [Type](docs/Commands.md#--type--t) and [others](docs/Commands.md#generate--g):
 ```sh
-create-graphql generate --mutation Story
+entria-graphql generate --mutation Story
 ```
 This generates a `StoryAddMutation` and `StoryEditMutation`
 
@@ -52,6 +52,8 @@ If you want to contribute, see the [Contributing guidelines](CONTRIBUTING.md) be
 ## Feedbacks
 
 We love the feedbacks. It's help us to continue grow and improve. Give your feedbacks by open an [issue](https://github.com/graphql-community/create-graphql/issues/new). We will be glad to discuss your suggestions!
+
+tks for @lucasbento
 
 ## License
 
