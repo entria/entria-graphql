@@ -160,6 +160,7 @@ export type MongooseFieldDefinition = {
 
   description?: string,
   required?: boolean,
+  ref: string,
 };
 
 type ArgumentValue = {

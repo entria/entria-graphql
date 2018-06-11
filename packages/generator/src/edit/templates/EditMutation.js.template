@@ -1,48 +1,45 @@
-import Relay from 'react-relay';
+// @flow
+import { commitMutation, graphql } from 'react-relay/compat';
 
-export default class <%= name %>EditMutation extends Relay.Mutation {
-  static fragments = {
-    <%= camelCaseName %>: () => Relay.QL`
-      fragment on <%= name %> {
+import RelayStore from '../../relay/RelayStore';
+
+import type {
+  <%= name %>EditMutationVariables,
+  <%= name %>EditMutationResponse,
+} from './__generated__/<%= name %>EditMutation.graphql';
+
+type <%= name %>EditMutationInput = $PropertyType<
+  <%= name %>EditMutationVariables,
+  'input',
+>;
+
+const mutation = graphql`
+  mutation <%= name %>EditMutation($input: <%= name %>EditInput!) {
+    <%= name %>Edit(input: $input) {
+      <%= name.toLowerCase() %> {
         id
       }
-    `,
+      error
+    }
+  }
+`;
+
+const commit = (
+  input: <%= name %>EditMutationInput,
+  onCompleted: (response: <%= name %>EditMutationResponse) => void,
+  onError: (error: Error) => void,
+) => {
+  const variables = {
+    input,
   };
 
-  getMutation() {
-    return Relay.QL`mutation {
-      <%= name %>Edit
-    }`;
-  }
+  commitMutation(RelayStore._env, {
+    mutation,
+    variables,
+    onCompleted,
+    onError,
+  });
+};
 
-  getVariables() {
-    const {
-      <%= camelCaseName %>: {
-        id,
-      },
-      // Todo add more mutation input fields here
-    } = this.props;
+export default { commit };
 
-    return {
-      id,
-      // TODO add more mutation input fields here
-    };
-  }
-
-  getFatQuery() {
-    return Relay.QL`
-      fragment on <%= name %>EditPayload {
-        <%= camelCaseName %>
-      }
-    `;
-  }
-
-  getConfigs() {
-    return [{
-      type: 'FIELDS_CHANGE',
-      fieldIDs: {
-        <%= camelCaseName %>: this.props.<%= camelCaseName %>.id,
-      },
-    }];
-  }
-}

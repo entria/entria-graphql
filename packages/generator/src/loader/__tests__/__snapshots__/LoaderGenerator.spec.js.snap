@@ -79,7 +79,7 @@ type PostType = {
   id: string,
   _id: string,
   title: string,
-  user: string,
+  author: string,
   slug: string,
   tags: string[],
   oldSlugs: string[],
@@ -93,7 +93,7 @@ export default class Post {
   id: string;
   _id: string;
   title: string;
-  user: string;
+  author: string;
   slug: string;
   tags: string[];
   oldSlugs: string[];
@@ -106,7 +106,7 @@ export default class Post {
     this.id = data.id;
     this._id = data._id;
     this.title = data.title;
-    this.user = data.user;
+    this.author = data.author;
     this.slug = data.slug;
     this.tags = data.tags;
     this.oldSlugs = data.oldSlugs;

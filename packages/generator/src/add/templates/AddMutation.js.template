@@ -1,63 +1,68 @@
-import Relay from 'react-relay';
+// @flow
+import { commitMutation, graphql } from 'react-relay/compat';
 
-export default class <%= name %>AddMutation extends Relay.Mutation {
-  static fragments = {
-    viewer: () => Relay.QL`
-      fragment on Viewer {
-        id
-      }
-    `,
-  };
+import RelayStore from '../../relay/RelayStore';
 
-  getMutation() {
-    return Relay.QL`mutation {
-      <%= name %>Add
-    }`;
-  }
+import type {
+  <%= name %>AddMutationVariables,
+  <%= name %>AddMutationResponse,
+} from './__generated__/<%= name %>AddMutation.graphql';
 
-  getVariables() {
-    const {
-      id
-      // TODO - add mutation input fields here
-    } = this.props;
+type <%= name %>AddMutationInput = $PropertyType<
+  <%= name %>AddMutationVariables,
+  'input',
+>;
 
-    return {
-      id
-      // TODO - add mutation input fields here
-    };
-  }
+// relay classic
+const getConfigs = viewerId => {
+  return [
+    {
+      type: 'RANGE_ADD',
+      parentName: 'viewer',
+      parentID: viewerId,
+      connectionName: '<%= pluralName.toLowerCase() %>',
+      edgeName: '<%= name.toLowerCase() %>Edge',
+      rangeBehaviors: () => {
+        return 'prepend';
+      },
+    },
+  ];
+};
 
-  getFatQuery() {
-    return Relay.QL`
-      fragment on <%= name %>AddPayload {
-        <%= camelCaseName %>Edge
-        viewer {
-          <%= pluralCamelCaseName %>
+const mutation = graphql`
+  mutation <%= name %>AddMutation($input: <%= name %>AddInput!) {
+    <%= name %>Add(input: $input) {
+      <%= name.toLowerCase() %>Edge {
+        __typename
+        cursor
+        node {
+          __typename
+          id
         }
       }
-    `;
+      error
+    }
   }
+`;
 
-  getConfigs() {
-    return [
-      {
-        type: 'RANGE_ADD',
-        parentName: 'viewer',
-        parentID: this.props.viewer.id,
-        connectionName: '<%= pluralName %>',
-        edgeName: '<%= rawName %>Edge',
-        rangeBehaviors: {
-          '': 'prepend',
-        },
-      },
-      {
-        type: 'REQUIRED_CHILDREN',
-        children: [Relay.QL`
-          fragment on <%= name %>AddPayload {
-            <%= camelCaseName %>Edge
-          }
-        `],
-      },
-    ];
-  }
-}
+const commit = (
+  viewerId: string,
+  input: <%= name %>AddMutationInput,
+  onCompleted: (response: <%= name %>AddMutationResponse) => void,
+  onError: (error: Error) => void,
+) => {
+  const variables = {
+    input,
+  };
+
+  commitMutation(RelayStore._env, {
+    mutation,
+    variables,
+    onCompleted,
+    onError,
+    configs: getConfigs(viewerId),
+  });
+};
+
+export default { commit };
+

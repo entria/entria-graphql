@@ -1,11 +1,10 @@
 import Generator from 'yeoman-generator';
 import pluralize from 'pluralize';
 import {
-  getConfigDir,
   getRelativeConfigDir,
-  camelCaseText,
-  uppercaseFirstLetter,
 } from '../utils';
+import { getConfigDir } from '../config';
+import { camelCaseText, uppercaseFirstLetter } from '../ejsHelpers';
 
 class EditGenerator extends Generator {
   constructor(args, options) {

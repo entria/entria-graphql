@@ -307,7 +307,7 @@ export default mutationWithClientMutationId({
     title: {
       type: GraphQLNonNull(GraphQLString),
     },
-    user: {
+    author: {
       type: GraphQLNonNull(GraphQLID),
     },
     slug: {
@@ -334,7 +334,7 @@ export default mutationWithClientMutationId({
 
     const {
       title,
-      user,
+      author,
       slug,
       tags,
       oldSlugs,
@@ -345,7 +345,7 @@ export default mutationWithClientMutationId({
     // Create new record
     const post = await new PostModel({
       title,
-      user,
+      author,
       slug,
       tags,
       oldSlugs,
@@ -413,7 +413,7 @@ it('should not allow anonymous user', async () => {
     mutation M {
       PostAdd(input: {
         title: \\"Example value\\"
-        user: \\"Example value\\"
+        author: \\"Example value\\"
         slug: \\"Example value\\"
         tags: \\"Example value\\"
         oldSlugs: \\"Example value\\"
@@ -423,7 +423,7 @@ it('should not allow anonymous user', async () => {
         postEdge {
           node {
             title
-            user
+            author
             slug
             tags
             oldSlugs
@@ -458,7 +458,7 @@ it('should create a record on database', async () => {
     mutation M {
       PostAdd(input: {
         title: \\"Example value\\"
-        user: \\"Example value\\"
+        author: \\"Example value\\"
         slug: \\"Example value\\"
         tags: \\"Example value\\"
         oldSlugs: \\"Example value\\"
@@ -468,7 +468,7 @@ it('should create a record on database', async () => {
         postEdge {
           node {
             title
-            user
+            author
             slug
             tags
             oldSlugs
@@ -516,7 +516,7 @@ export default mutationWithClientMutationId({
     title: {
       type: GraphQLNonNull(GraphQLString),
     },
-    user: {
+    author: {
       type: GraphQLNonNull(GraphQLID),
     },
     slug: {
@@ -544,7 +544,7 @@ export default mutationWithClientMutationId({
     const {
       id,
       title,
-      user,
+      author,
       slug,
       tags,
       oldSlugs,
@@ -565,7 +565,7 @@ export default mutationWithClientMutationId({
     // Edit record
     await post.update({
       title,
-      user,
+      author,
       slug,
       tags,
       oldSlugs,
@@ -620,7 +620,7 @@ it('should not allow anonymous user', async () => {
   // TODO: specify fields to create a new Post
   const post = new Post({
     title: 'Example value',
-    user: 'Example value',
+    author: 'Example value',
     slug: 'Example value',
     tags: 'Example value',
     oldSlugs: 'Example value',
@@ -641,7 +641,7 @@ it('should not allow anonymous user', async () => {
       }) {
         post {
           title
-          user
+          author
           slug
           tags
           oldSlugs
@@ -672,7 +672,7 @@ it('should edit a record on database', async () => {
   // TODO: specify fields to create a new Post
   const post = new Post({
     title: 'Example value',
-    user: 'Example value',
+    author: 'Example value',
     slug: 'Example value',
     tags: 'Example value',
     oldSlugs: 'Example value',
@@ -693,7 +693,7 @@ it('should edit a record on database', async () => {
       }) {
         post {
           title
-          user
+          author
           slug
           tags
           oldSlugs

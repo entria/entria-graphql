@@ -10,7 +10,7 @@ const Schema = new mongoose.Schema({
     maxlength: 120,
     required: true,
   },
-  user: {
+  author: {
     type: ObjectId,
     ref: 'User',
     description: 'User that created this post',

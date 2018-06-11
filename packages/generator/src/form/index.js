@@ -3,10 +3,11 @@ import pluralize from 'pluralize';
 import {
   getRelativeConfigDir,
 } from '../utils';
+
 import { getConfigDir } from '../config';
 import { camelCaseText, uppercaseFirstLetter } from '../ejsHelpers';
 
-class ViewGenerator extends Generator {
+class AddGenerator extends Generator {
   constructor(args, options) {
     super(args, options);
 
@@ -17,7 +18,7 @@ class ViewGenerator extends Generator {
 
     // TODO read schema.json
 
-    this.destinationDir = getConfigDir('view');
+    this.destinationDir = getConfigDir('add');
   }
 
   _getConfigDirectories() {
@@ -31,8 +32,6 @@ class ViewGenerator extends Generator {
 
     const name = uppercaseFirstLetter(this.options.name);
 
-    const templatePath = this.templatePath('View.js.template');
-
     // const templatePath = schema ?
     //   this.templatePath('LoaderWithSchema.js.template')
     //   : this.templatePath('Loader.js.template');
@@ -41,7 +40,6 @@ class ViewGenerator extends Generator {
 
     const pluralName = pluralize(this.options.name);
 
-    const destinationPath = this.destinationPath(`${this.destinationDir}/${name}View.js`);
     const templateVars = {
       name,
       rawName: this.options.name,
@@ -50,12 +48,16 @@ class ViewGenerator extends Generator {
       pluralCamelCaseName: camelCaseText(pluralName),
     };
 
-    this.fs.copyTpl(templatePath, destinationPath, templateVars);
+    const filename = `${name}Form.js`;
+
+    this.fs.copyTpl(
+      this.templatePath('Form.js.template'), `${this.destinationDir}/${filename}`, templateVars,
+    );
   }
 
   end() {
-    this.log('🔥 View created!');
+    this.log('🔥 Form created!');
   }
 }
 
-module.exports = ViewGenerator;
+module.exports = AddGenerator;

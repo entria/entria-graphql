@@ -2,179 +2,115 @@
 
 exports[`generate add and add mutation files 1`] = `
 Object {
-  "add": "import React, { Component, PropTypes } from 'react';
-import Relay from 'react-relay';
-import RelayStore from '../../RelayStore';
-import { withRouter } from 'react-router';
+  "add": "//@flow
+import * as React from 'react';
+import { graphql, createFragmentContainer } from 'react-relay/compat';
+import { hot } from 'react-hot-loader';
 
-import ExampleAddMutation from './ExampleAddMutation';
+import createQueryRenderer from '../../relay/createQueryRenderer';
 
-import Form from '../common/Form';
+import ExampleForm from './ExampleForm';
+import type { ExampleAdd_viewer } from './__generated__/ExampleAdd_viewer.graphql';
 
-class ExampleAdd extends Component {
-  static contextTypes = {
-    showSnackbar: PropTypes.func,
-  };
-
-  fields = [
-    {
-      name: 'id',
-      placeholder: 'ID',
-      required: true,
-    },
-    // TODO - add ObjectType fields here
-  ];
-
-  onSubmit = (data) => {
-    const mutation = new ExampleAddMutation({
-      viewer: this.props.viewer,
-      ...data,
-    });
-
-    RelayStore.commitUpdate(mutation, {
-      onSuccess: ({ ExampleAdd }) => {
-        this.context.showSnackbar({
-          message: 'Example created successfully!',
-        });
-
-        this.props.router.push(\`/examples/view/\${ExampleAdd.exampleEdge.node.id}\`);
-      },
-      onFailure: (failureResponse) => {
-        this.context.showSnackbar({
-          message: 'There was an error while trying to create a Example.',
-        });
-
-        console.log('FAIL', failureResponse);
-      },
-    });
-  };
-
+type Props = {
+  viewer: ExampleAdd_viewer,
+};
+class ExampleAdd extends React.PureComponent<Props> {
   render() {
-    return (
-      <div>
-        <h1 style={styles.title}>
-          New Example
-        </h1>
-        <Form
-          fields={this.fields}
-          onSubmit={this.onSubmit}
-        />
-      </div>
-    );
+    const { viewer } = this.props;
+    return <ExampleForm viewer={viewer} />;
   }
 }
 
-const styles = {
-  form: {
-    backgroundColor: 'white',
-    boxShadow: 'rgba(0, 0, 0, 0.056863) 0px 7px 8px, rgba(0, 0, 0, 0.227451) 0px 0px 0px',
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: '#E7ECEA',
-    padding: 20,
-    paddingTop: 50,
-  },
-  formContainer: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
-  title: {
-    fontSize: 25,
-    fontWeight: 300,
-  },
-  actionsContainer: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    marginTop: 5,
-    paddingRight: 8,
-    borderTopStyle: 'solid',
-    borderTopWidth: 1,
-    paddingTop: 15,
-    borderColor: '#ECECEC',
-  },
-  formField: {
-    marginRight: 10,
-    flex: '1 0 47%',
-  },
-  selectField: {
-    marginRight: 10,
-    flex: '1 0 48%',
-  },
-};
-
-export default Relay.createContainer(withRouter(ExampleAdd), {
-  fragments: {
-    viewer: () => Relay.QL\`
-      fragment on Viewer {
-        \${ExampleAddMutation.getFragment('viewer')}
-      }
-    \`,
-  },
+const ExampleAddFragment = createFragmentContainer(ExampleAdd, {
+  viewer: graphql\`
+    fragment ExampleAdd_viewer on Viewer {
+      id
+      ...ExampleForm_viewer
+    }
+  \`,
 });
-",
-  "addMutation": "import Relay from 'react-relay';
 
-export default class ExampleAddMutation extends Relay.Mutation {
-  static fragments = {
-    viewer: () => Relay.QL\`
-      fragment on Viewer {
-        id
-      }
-    \`,
-  };
-
-  getMutation() {
-    return Relay.QL\`mutation {
-      ExampleAdd
-    }\`;
-  }
-
-  getVariables() {
-    const {
-      id
-      // TODO - add mutation input fields here
-    } = this.props;
-
-    return {
-      id
-      // TODO - add mutation input fields here
-    };
-  }
-
-  getFatQuery() {
-    return Relay.QL\`
-      fragment on ExampleAddPayload {
-        exampleEdge
+export default hot(module)(
+  createQueryRenderer(ExampleAddFragment, ExampleAdd, {
+    query: graphql\`
+      query ExampleAddQuery {
         viewer {
-          examples
+          ...ExampleAdd_viewer
         }
       }
-    \`;
-  }
+    \`,
+  }),
+);
+",
+  "addMutation": "// @flow
+import { commitMutation, graphql } from 'react-relay/compat';
 
-  getConfigs() {
-    return [
-      {
-        type: 'RANGE_ADD',
-        parentName: 'viewer',
-        parentID: this.props.viewer.id,
-        connectionName: 'Examples',
-        edgeName: 'ExampleEdge',
-        rangeBehaviors: {
-          '': 'prepend',
-        },
+import RelayStore from '../../relay/RelayStore';
+
+import type {
+  ExampleAddMutationVariables,
+  ExampleAddMutationResponse,
+} from './__generated__/ExampleAddMutation.graphql';
+
+type ExampleAddMutationInput = $PropertyType<
+  ExampleAddMutationVariables,
+  'input',
+>;
+
+// relay classic
+const getConfigs = viewerId => {
+  return [
+    {
+      type: 'RANGE_ADD',
+      parentName: 'viewer',
+      parentID: viewerId,
+      connectionName: 'examples',
+      edgeName: 'exampleEdge',
+      rangeBehaviors: () => {
+        return 'prepend';
       },
-      {
-        type: 'REQUIRED_CHILDREN',
-        children: [Relay.QL\`
-          fragment on ExampleAddPayload {
-            exampleEdge
-          }
-        \`],
-      },
-    ];
+    },
+  ];
+};
+
+const mutation = graphql\`
+  mutation ExampleAddMutation($input: ExampleAddInput!) {
+    ExampleAdd(input: $input) {
+      exampleEdge {
+        __typename
+        cursor
+        node {
+          __typename
+          id
+        }
+      }
+      error
+    }
   }
-}
+\`;
+
+const commit = (
+  viewerId: string,
+  input: ExampleAddMutationInput,
+  onCompleted: (response: ExampleAddMutationResponse) => void,
+  onError: (error: Error) => void,
+) => {
+  const variables = {
+    input,
+  };
+
+  commitMutation(RelayStore._env, {
+    mutation,
+    variables,
+    onCompleted,
+    onError,
+    configs: getConfigs(viewerId),
+  });
+};
+
+export default { commit };
+
 ",
 }
 `;
