@@ -24,12 +24,12 @@ Check out the post *[Announcing Create-GraphQL](https://medium.com/entria/announ
 
 #### With Yarn:
 ```sh
-yarn global add @entria/create-graphql @entria/graphql-generator
+yarn global add @entria/create-graphql @entria/generator-graphql
 ```
 
 #### With NPM:
 ```sh
-npm i -g @entria/create-graphql @entria/graphql-generator
+npm i -g @entria/create-graphql @entria/generator-graphql
 ```
 
 ## Usage
