@@ -1,25 +1,3 @@
-# ![Create-GraphQL Logo](/media/logo.png)
-
-<h1 align="center">Create GraphQL</h1>
-<p align="center">
-  Create production-ready GraphQL servers
-</p>
-
-<p align="center">
-  <a href="https://travis-ci.org/graphql-community/create-graphql"><img src="https://travis-ci.org/graphql-community/create-graphql.svg?branch=master"></a>
-  <a href="https://ci.appveyor.com/project/graphql-community/create-graphql/branch/master"><img src="https://ci.appveyor.com/api/projects/status/cpxul2ofnyf6ypy8/branch/master?svg=true"></a>
-  <a href="https://codecov.io/gh/graphql-community/create-graphql"><img src="https://img.shields.io/codecov/c/github/graphql-community/create-graphql.svg"></a>
-  <a href="https://github.com/airbnb/javascript"><img src="https://img.shields.io/badge/code%20style-airbnb-blue.svg"></a>
-  <a href="https://github.com/graphql-community/create-graphql/issues"><img src="https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat"></a>
-</p>
-
-
-
-## About
-**[Create-GraphQL](https://github.com/graphql-community/create-graphql)** is a command-line utility to build production-ready servers with GraphQL and also generate *Mutations*, *Types* and more into existent projects
-
-Check out the post *[Announcing Create-GraphQL](https://medium.com/entria/announcing-create-graphql-17bdd81b9f96)* on **[Entria](https://medium.com/entria)** medium
-
 ## Install
 
 #### With Yarn:
